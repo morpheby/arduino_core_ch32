@@ -62,7 +62,7 @@ int main( void )
     pre_init( );
     
 #if USE_FREERTOS
-    xTaskCreateUniversal(loopTask, "loopTask", ARDUINO_LOOP_STACK_SIZE, NULL, 1, &loopTaskHandle, ARDUINO_RUNNING_CORE);
+    xTaskCreate(loopTask, "loopTask", ARDUINO_LOOP_STACK_SIZE, NULL, 1, &loopTaskHandle);
 #else
     loopFn();
 #endif
