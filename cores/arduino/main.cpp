@@ -3,21 +3,41 @@
 #include "Arduino.h"
 #include "debug.h"
 
+#if __has_include("freertos/FreeRTOS.h")
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
-/*
- * \brief Main entry point of Arduino application
- */
-int main( void )
-{
-    pre_init( );
+#define USE_FREERTOS 1
+
+#ifndef ARDUINO_LOOP_STACK_SIZE
+#define ARDUINO_LOOP_STACK_SIZE 8192
+#endif
+
+void yieldIfNecessary(void) {
+  static uint64_t lastYield = 0;
+  uint64_t now = millis();
+  if ((now - lastYield) > 2000) {
+    lastYield = now;
+    vTaskDelay(5);  //delay 1 RTOS tick
+  }
+}
+
+TaskHandle_t loopTaskHandle = NULL;
+
+#endif
+
+
+[[noreturn]] static void loopFn() {
 #if defined(USE_TINYUSB)
     if (TinyUSB_Device_Init) {
         TinyUSB_Device_Init(0);
     }
 #endif
-    setup( );
-  
-    do {
+    setup();
+    for (;;) {
+#if USE_FREERTOS
+        yieldIfNecessary();
+#endif
         loop( );
 #if defined(USE_TINYUSB)
         if (TinyUSB_Device_Task) {
@@ -27,7 +47,27 @@ int main( void )
             TinyUSB_Device_FlushCDC();
         }
 #endif
-    } while (1);
+    }
+}
+
+#if USE_FREERTOS
+void loopTask(void *pvParameters) {
+    loopFn();
+}
+#endif
+
+/*
+ * \brief Main entry point of Arduino application
+ */
+int main( void )
+{
+    pre_init( );
+    
+#if USE_FREERTOS
+    xTaskCreateUniversal(loopTask, "loopTask", ARDUINO_LOOP_STACK_SIZE, NULL, 1, &loopTaskHandle, ARDUINO_RUNNING_CORE);
+#else
+    loopFn();
+#endif
 
     return 0;
 }
