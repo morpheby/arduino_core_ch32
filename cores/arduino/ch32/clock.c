@@ -141,6 +141,16 @@ void SysTick_Handler(void)
 
 #endif
 
+#else
+
+#include "FreeRTOS.h"
+#include "task.h"
+
+WEAK uint64_t GetTick(void) {
+  // Some internal functions use this
+  return xTaskGetTickCount() * portTICK_PERIOD_MS;
+}
+
 #endif
 
 
