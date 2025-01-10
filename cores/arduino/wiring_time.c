@@ -18,6 +18,11 @@
 
 #include "Arduino.h"
 
+#if USE_FREERTOS
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -36,12 +41,17 @@ uint32_t micros(void)
 
 void delay(uint32_t ms)
 {
+  
+#if USE_FREERTOS
+  vTaskDelay(ms);
+#else
   if (ms != 0) {
     uint32_t start = getCurrentMillis();
     do {
       yield();
     } while (getCurrentMillis() - start < ms);
   }
+#endif
 }
 
 #ifdef __cplusplus

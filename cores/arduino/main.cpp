@@ -3,11 +3,9 @@
 #include "Arduino.h"
 #include "debug.h"
 
-#if __has_include("freertos/FreeRTOS.h")
+#if USE_FREERTOS
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-
-#define USE_FREERTOS 1
 
 #ifndef ARDUINO_LOOP_STACK_SIZE
 #define ARDUINO_LOOP_STACK_SIZE 8192

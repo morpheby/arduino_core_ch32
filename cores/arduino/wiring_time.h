@@ -118,7 +118,6 @@ static inline void delayMicroseconds(uint32_t us)
 #endif
 
 
-
 #ifdef __cplusplus
 }
 #endif
