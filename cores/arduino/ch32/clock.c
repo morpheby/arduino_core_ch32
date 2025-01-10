@@ -23,6 +23,7 @@ extern "C" {
 // #define TICK_FREQ_100Hz   10L
 // #define TICK_FREQ_10Hz    100L 
 
+#if !(USE_FREERTOS)
 
 __IO uint64_t msTick=0;
 WEAK uint64_t GetTick(void)
@@ -140,7 +141,7 @@ void SysTick_Handler(void)
 
 #endif
 
-
+#endif
 
 
 #ifdef __cplusplus
