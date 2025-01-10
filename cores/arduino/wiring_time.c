@@ -29,8 +29,13 @@ extern "C" {
 
 uint32_t millis(void)
 {
+#if USE_FREERTOS
+  return xTaskGetTickCount() * (1000 / configTICK_RATE_HZ);
+configTICK_RATE_HZ
+#else
   // ToDo: ensure no interrupts
   return getCurrentMillis();
+#endif
 }
 
 // Interrupt-compatible version of micros
