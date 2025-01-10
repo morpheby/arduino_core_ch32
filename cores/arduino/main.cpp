@@ -4,8 +4,8 @@
 #include "debug.h"
 
 #if USE_FREERTOS
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 #ifndef ARDUINO_LOOP_STACK_SIZE
 #define ARDUINO_LOOP_STACK_SIZE 8192
