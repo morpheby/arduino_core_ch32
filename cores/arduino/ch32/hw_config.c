@@ -45,7 +45,9 @@ void systick_init(void)
 
 void hw_config_init(void)
 {
+#if !(USE_FREERTOS)
   systick_init();
+#endif
 }
 #ifdef __cplusplus
 }

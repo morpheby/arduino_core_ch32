@@ -60,6 +60,7 @@ void loopTask(void *pvParameters) {
 int main( void )
 {
     pre_init( );
+    NVIC_PriorityGroupConfig(1);
     
 #if USE_FREERTOS
     xTaskCreate(loopTask, "loopTask", ARDUINO_LOOP_STACK_SIZE, NULL, 1, &loopTaskHandle);
