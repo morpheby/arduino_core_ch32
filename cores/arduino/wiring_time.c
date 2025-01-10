@@ -47,7 +47,7 @@ void delay(uint32_t ms)
 {
   
 #if USE_FREERTOS
-  vTaskDelay(ms);
+  vTaskDelay(pdMS_TO_TICKS(ms));
 #else
   if (ms != 0) {
     uint32_t start = getCurrentMillis();
