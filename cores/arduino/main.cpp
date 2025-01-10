@@ -63,6 +63,7 @@ int main( void )
     
 #if USE_FREERTOS
     xTaskCreate(loopTask, "loopTask", ARDUINO_LOOP_STACK_SIZE, NULL, 1, &loopTaskHandle);
+    vTaskStartScheduler();
 #else
     loopFn();
 #endif
