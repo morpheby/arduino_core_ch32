@@ -239,11 +239,10 @@ extern "C" {
     switch (file) {
       case STDOUT_FILENO:
       case STDERR_FILENO:
+      case STDIN_FILENO: // This doesn't make sense, but something somewhere is broken in printf call
         #if defined(UART_MODULE_ENABLED) && !defined(UART_MODULE_ONLY)
         uart_debug_write((uint8_t *)ptr, (uint32_t)len);
         #endif
-        break;
-      case STDIN_FILENO:
         break;
       default:
         ((class Print *)file)->write((uint8_t *)ptr, len);
