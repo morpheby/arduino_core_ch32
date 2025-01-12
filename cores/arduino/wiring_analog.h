@@ -40,6 +40,11 @@ typedef enum _eAnalogReference {
 extern void analogReference(eAnalogReference ulMode) ;
 
 /*
+ * \brief Performs ADC calibration on all channels
+ */
+extern void analogCalibration();
+
+/*
  * \brief Writes an analog value (PWM wave) to a pin.
  *
  * \param ulPin

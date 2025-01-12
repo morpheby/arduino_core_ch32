@@ -73,11 +73,13 @@ extern "C" {
 #if defined(NDEBUG)
 #if !defined(_Error_Handler)
 #define _Error_Handler(str, value) \
+  printf("Arduino exception: %s, %i\n", str, (int) value); \
   while (1) {\
   }
 #endif
 #if !defined(Error_Handler)
 #define Error_Handler() \
+  printf("Arduino exception"); \
   while (1) {\
   }
 #endif

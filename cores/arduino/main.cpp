@@ -12,7 +12,7 @@
 #endif
 
 #ifndef USBD_STACK_SZ
-#define USBD_STACK_SZ 512
+#define USBD_STACK_SZ 256
 #endif
 
 void yieldIfNecessary(void) {

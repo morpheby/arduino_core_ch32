@@ -14,19 +14,44 @@
 #include "ch32yyxx_adc.h"
 #include "PinAF_ch32yyxx.h"
 
+#if USE_FREERTOS
+
+#include "FreeRTOS.h"
+#include "task.h"
+
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#if USE_FREERTOS
+static bool conversionDone = false;
+static TaskHandle_t adcWaitingTaskHandle;
+
+__attribute__((interrupt))
+void ADC1_2_IRQHandler(void) {
+  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+  if (adcWaitingTaskHandle) {
+    vTaskNotifyGiveFromISR(adcWaitingTaskHandle, &xHigherPriorityTaskWoken);
+  }
+
+  if (xHigherPriorityTaskWoken != pdFALSE) { taskYIELD (); }
+
+  ADC_ClearITPendingBit(ADC1, ADC_IT_EOC | ADC_IT_AWD | ADC_IT_JEOC);
+  ADC_ClearITPendingBit(ADC2, ADC_IT_EOC | ADC_IT_AWD | ADC_IT_JEOC);
+  conversionDone = true;
+}
+
+#endif
 
 /* Private_Variables */
 #if (defined(ADC_MODULE_ENABLED) && !defined(ADC_MODULE_ONLY)) ||\
     (defined(DAC_MODULE_ENABLED) && !defined(DAC_MODULE_ONLY))
 static PinName g_current_pin = NC;
-static int calibration_value = 0;
+static int calibration_value_adc1 = 0;
+static int calibration_value_adc2 = 0;
 #endif
-
 
 /* Private_Defines */
 #if defined(ADC_MODULE_ENABLED) && !defined(ADC_MODULE_ONLY)
@@ -593,6 +618,8 @@ void ADC_Clock_EN(ADC_TypeDef *padc)
   {
       pinmap_pinout(g_current_pin, PinMap_ADC);
   }
+
+  NVIC_EnableIRQ(ADC_IRQn);
 }
 
 
@@ -634,7 +661,7 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution)
     padc = (ADC_TypeDef *)pinmap_peripheral(pin, PinMap_ADC);
     channel = get_adc_channel(pin);
   }
-
+  
   g_current_pin = pin;    
   ADC_Clock_EN(padc);  
 
@@ -659,40 +686,55 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution)
   ADC_InitStructure.ADC_NbrOfChannel         = 1; 
   ADC_InitStructure.ADC_ExternalTrigConv     = ADC_ExternalTrigConv_None;
  #if !defined(CH32V00x) && !defined(CH32V10x)  && !defined(CH32VM00X)
-  ADC_InitStructure.ADC_OutputBuffer         = ENABLE;
+  ADC_InitStructure.ADC_OutputBuffer         = ADC_OutputBuffer_Enable;
 #endif
   ADC_Init(padc, &ADC_InitStructure);
+  ADC_TempSensorVrefintCmd((pin & PADC_BASE) && (pin < ANA_START) ? ENABLE : DISABLE);
   padc->STATR = 0;
+  
+#if USE_FREERTOS
+  ADC_ITConfig(padc, ADC_IT_EOC, ENABLE);
+#endif
+
   ADC_Cmd(padc,ENABLE); 
 
   /*##-2- Configure ADC regular channel ######################################*/  
-  ADC_RegularChannelConfig(padc, channel, ADC_REGULAR_RANK_1, samplingTime );	  
+  ADC_RegularChannelConfig(padc, channel, ADC_REGULAR_RANK_1, samplingTime );
 
-#if defined(ADC_CTLR_ADCAL) 
-  /*##-2.1- Calibrate ADC then Start the conversion process ####################*/
-   #if !defined(CH32V00x) 
-  ADC_BufferCmd(padc, DISABLE);   //disable buffer
-  #endif
-	ADC_ResetCalibration(padc);
-	while(ADC_GetResetCalibrationStatus(padc));
-	ADC_StartCalibration(padc);
-	while(ADC_GetCalibrationStatus(padc));
-	calibration_value = Get_CalibrationValue(padc);	
-	ADC_BufferCmd(padc, ENABLE);   //enable buffer  
+#if USE_FREERTOS
+  conversionDone = false;
+  adcWaitingTaskHandle = xTaskGetCurrentTaskHandle();
 #endif
-
   /*##-3- Start the conversion process ####################*/
   ADC_SoftwareStartConvCmd(padc, ENABLE);
   /*##-4- Wait for the end of conversion #####################################*/
-  /*  For simplicity reasons, this example is just waiting till the end of the
-      conversion, but application may perform other tasks while conversion
-      operation is ongoing. */
-  while(!ADC_GetFlagStatus(padc, ADC_FLAG_EOC ));
-  uhADCxConvertedValue = padc->RDATAR;
+#if USE_FREERTOS
+  while (!conversionDone) {
+    ulTaskNotifyTake(1, pdMS_TO_TICKS(10));
+  }
+#else
+  while(!ADC_GetFlagStatus(padc, ADC_FLAG_EOC));
+#endif
+  conversionDone = false;
+  
+  uhADCxConvertedValue = ADC_GetConversionValue(padc);
+  ADC_ClearFlag(padc, ADC_FLAG_EOC | ADC_FLAG_STRT | ADC_FLAG_AWD);
+
+  ADC_TempSensorVrefintCmd(DISABLE);
   ADC_Stop(padc);
   ADC_DeInit(padc);
+  
+#if USE_FREERTOS
+  adcWaitingTaskHandle = nullptr;
+  ADC_ITConfig(padc, ADC_IT_EOC, DISABLE);
+#endif
 
 #if defined(ADC_CTLR_ADCAL)
+    int calibration_value = 0;
+    if (padc == ADC1)
+      calibration_value = calibration_value_adc1;
+    else if (padc == ADC2)
+      calibration_value = calibration_value_adc2;
   #if (ADC_RESOLUTION == 8)
     if(( calibration_value + uhADCxConvertedValue ) >= 255 )
     {
@@ -739,8 +781,105 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution)
   return uhADCxConvertedValue;
 #endif
 }
-#endif /* ADC_MODULE_ENABLED && !ADC_MODULE_ONLY*/
 
+#if defined(ADC_CTLR_ADCAL)
+void perform_adc_calibration(ADC_TypeDef *padc) {
+  ADC_Clock_EN(padc);  
+  ADC_Cmd(padc,ENABLE);
+#if USE_FREERTOS
+  ADC_ITConfig(padc, ADC_IT_EOC, ENABLE);
+#endif
+
+#if !defined(CH32V00x)
+  ADC_BufferCmd(padc, DISABLE);   //disable buffer
+#endif
+
+#if USE_FREERTOS
+  adcWaitingTaskHandle = xTaskGetCurrentTaskHandle();
+#endif
+
+
+  __IO uint8_t  i, j;
+  uint16_t      buf[10];
+  __IO uint16_t t;
+#if defined (CH32V20x_D6)
+  __IO uint16_t p;
+#endif
+
+  for(i = 0; i < 10; i++){
+      ADC_ResetCalibration(padc);
+      while(ADC_GetResetCalibrationStatus(padc));
+      ADC_StartCalibration(padc);
+      while(ADC_GetCalibrationStatus(padc)) {
+#if USE_FREERTOS
+        ulTaskNotifyTake(1, pdMS_TO_TICKS(10));
+#endif
+      }
+      buf[i] = padc->RDATAR;
+  }
+	ADC_BufferCmd(padc, ENABLE);   //enable buffer
+
+#if USE_FREERTOS
+  adcWaitingTaskHandle = nullptr;
+  ADC_ITConfig(padc, ADC_IT_EOC, DISABLE);
+#endif
+
+    for(i = 0; i < 10; i++){
+        for(j = 0; j < 9; j++){
+            if(buf[j] > buf[j + 1])
+            {
+                t = buf[j];
+                buf[j] = buf[j + 1];
+                buf[j + 1] = t;
+            }
+        }
+    }
+
+#if defined (CH32V20x_D8) || defined (CH32V20x_D8W)
+    t = 0;
+    for( i = 0; i < 6; i++ ) {
+        t += buf[i + 2];
+    }
+
+    t = ( t / 6 ) + ( ( t % 6 ) / 3 );
+
+    int calibration_value = ( int16_t )( 2048 - ( int16_t )t );
+#else
+    t = 0;
+    p = 0;
+    /* 1024 */
+    for(i = 0; i < 6; i++ ){
+            if(buf[i+2] > 1536) break;
+            t += buf[i+2];
+    }
+
+    if(i > 0){
+            t = ( t / i ) + ( (( t % i )*2) / i );
+    }
+    else t = 1024;
+
+    /* 2048 */
+    j = 6-i;
+    if(j > 0){
+        for(; i < 6; i++ ){
+                p += buf[i+2];
+        }
+
+        p = ( p / j ) + ( (( p % j )*2) / j );
+    }
+    else p = 2048;
+
+    int calibration_value = ( int16_t )(((( int16_t )( 1024 - ( int16_t )t ) + ( int16_t )( 2048 - ( int16_t )p ))/2) + ((( int16_t )( 1024 - ( int16_t )t ) + ( int16_t )( 2048 - ( int16_t )p ))%2));
+#endif
+    if (padc == ADC1) {
+      calibration_value_adc1 = calibration_value;
+    } else if (padc == ADC2) {
+      calibration_value_adc2 = calibration_value;
+    }
+}
+#endif
+
+#endif /* ADC_MODULE_ENABLED && !ADC_MODULE_ONLY*/
 
 
 

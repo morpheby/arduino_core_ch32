@@ -113,6 +113,13 @@ static inline uint32_t mapResolution(uint32_t value, uint32_t from, uint32_t to)
   return value;
 }
 
+#if ADC_CTLR_ADCAL
+void analogCalibration() {
+  perform_adc_calibration(ADC1);
+  perform_adc_calibration(ADC2);
+}
+#endif
+
 void analogReference(eAnalogReference ulMode)
 {
   (void) ulMode;
