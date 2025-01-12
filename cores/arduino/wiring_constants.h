@@ -89,8 +89,8 @@ enum BitOrder {
 #define degrees(rad) ((rad)*RAD_TO_DEG)
 #define sq(x) ((x)*(x))
 
-#define interrupts() __enable_irq()
-#define noInterrupts() __disable_irq()
+#define noInterrupts() {portENTER_CRITICAL()
+#define interrupts() portEXIT_CRITICAL();}
 
 #define lowByte(w) ((uint8_t) ((w) & 0xff))
 #define highByte(w) ((uint8_t) ((w) >> 8))
