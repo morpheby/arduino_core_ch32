@@ -55,7 +55,7 @@ extern "C" {
 #if defined(ADC_MODULE_ENABLED) && !defined(ADC_MODULE_ONLY)
 uint32_t get_adc_channel(PinName pin);
 uint32_t get_adc_internal_channel(PinName pin);
-uint16_t adc_read_value(PinName pin, uint32_t resolution);
+uint16_t adc_read_value(PinName pin, uint32_t resolution, uint8_t gain);
 #if ADC_CTLR_ADCAL
 void perform_adc_calibration(ADC_TypeDef *padc);
 #endif

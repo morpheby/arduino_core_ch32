@@ -49,8 +49,8 @@ void ADC1_2_IRQHandler(void) {
 #if (defined(ADC_MODULE_ENABLED) && !defined(ADC_MODULE_ONLY)) ||\
     (defined(DAC_MODULE_ENABLED) && !defined(DAC_MODULE_ONLY))
 static PinName g_current_pin = NC;
-static int calibration_value_adc1 = 0;
-static int calibration_value_adc2 = 0;
+static uint16_t calibration_value_adc1 = 0;
+static uint16_t calibration_value_adc2 = 0;
 #endif
 
 /* Private_Defines */
@@ -639,13 +639,13 @@ void ADC_Stop(ADC_TypeDef *padc)
   * @param  resolution : resolution for converted data: 8/10/12
   * @retval the value of the adc
   */
-uint16_t adc_read_value(PinName pin, uint32_t resolution)
+uint16_t adc_read_value(PinName pin, uint32_t resolution, uint8_t gain)
 {
 
   ADC_TypeDef *padc ;
   ADC_InitTypeDef ADC_InitStructure={0};
 
-  __IO uint16_t uhADCxConvertedValue = 0;
+  uint16_t uhADCxConvertedValue = 0;
   uint32_t samplingTime = ADC_SAMPLINGTIME;
   uint32_t channel = 0;
   uint32_t bank = 0;
@@ -685,6 +685,7 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution)
   ADC_InitStructure.ADC_ContinuousConvMode   = DISABLE;
   ADC_InitStructure.ADC_NbrOfChannel         = 1; 
   ADC_InitStructure.ADC_ExternalTrigConv     = ADC_ExternalTrigConv_None;
+  ADC_InitStructure.ADC_Pga                  = gain == 64 ? ADC_Pga_64 : gain == 16 ? ADC_Pga_16 : gain == 4 ? ADC_Pga_4 : ADC_Pga_1;
  #if !defined(CH32V00x) && !defined(CH32V10x)  && !defined(CH32VM00X)
   ADC_InitStructure.ADC_OutputBuffer         = ADC_OutputBuffer_Enable;
 #endif
@@ -730,7 +731,7 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution)
 #endif
 
 #if defined(ADC_CTLR_ADCAL)
-    int calibration_value = 0;
+    uint16_t calibration_value = 0;
     if (padc == ADC1)
       calibration_value = calibration_value_adc1;
     else if (padc == ADC2)
@@ -740,7 +741,7 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution)
     {
       return 255;
     }
-    else if( ( calibration_value + uhADCxConvertedValue ) <= 0 )
+    else if( ( calibration_value + uhADCxConvertedValue ) >= INT16_MAX )
     {
       return 0;
     }
@@ -754,7 +755,7 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution)
     {
       return 1023;
     }
-    else if( ( calibration_value + uhADCxConvertedValue ) <= 0 )
+    else if( ( calibration_value + uhADCxConvertedValue ) >= INT16_MAX )
     {
       return 0;
     }
@@ -768,7 +769,7 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution)
     {
       return 4095;
     }
-    else if( ( calibration_value + uhADCxConvertedValue ) <= 0 )
+    else if( ( calibration_value + uhADCxConvertedValue ) >= INT16_MAX )
     {
       return 0;
     }

@@ -133,7 +133,7 @@ uint32_t analogRead(uint32_t ulPin)
 #if defined(ADC_MODULE_ENABLED) && !defined(ADC_MODULE_ONLY)
   PinName p = analogInputToPinName(ulPin);
   if (p != NC) {
-    value = adc_read_value(p, _internalReadResolution);
+    value = adc_read_value(p, _internalReadResolution, 1);
     value = mapResolution(value, _internalReadResolution, _readResolution);
   }
 #else
@@ -142,6 +142,22 @@ uint32_t analogRead(uint32_t ulPin)
   return value;
 }
 
+// Perform the read operation on the selected analog pin.
+// the initialization of the analog PIN is done through this function
+uint32_t analogReadWithGain(uint32_t ulPin, eAnalogGain gain)
+{
+  uint32_t value = 0;
+#if defined(ADC_MODULE_ENABLED) && !defined(ADC_MODULE_ONLY)
+  PinName p = analogInputToPinName(ulPin);
+  if (p != NC) {
+    value = adc_read_value(p, _internalReadResolution, (uint8_t) gain);
+    value = mapResolution(value, _internalReadResolution, _readResolution);
+  }
+#else
+  (void) ulPin;
+#endif
+  return value;
+}
 
 void analogOutputInit(void)
 {

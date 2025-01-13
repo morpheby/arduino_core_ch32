@@ -31,6 +31,13 @@ typedef enum _eAnalogReference {
   AR_DEFAULT,
 } eAnalogReference ;
 
+typedef enum _eAnalogGain {
+  ANALOG_GAIN_1 = 1,
+  ANALOG_GAIN_4 = 4,
+  ANALOG_GAIN_16 = 16,
+  ANALOG_GAIN_64 = 64,
+} eAnalogGain;
+
 /*
  * \brief Configures the reference voltage used for analog input (i.e. the value used as the top of the input range).
  * This function is kept only for compatibility with existing AVR based API.
@@ -60,6 +67,15 @@ extern void analogWrite(uint32_t ulPin, uint32_t ulValue) ;
  * \return Read value from selected pin, if no error.
  */
 extern uint32_t analogRead(uint32_t ulPin) ;
+
+/*
+ * \brief Reads the value from the specified analog pin.
+ *
+ * \param ulPin
+ *
+ * \return Read value from selected pin, if no error.
+ */
+extern uint32_t analogReadWithGain(uint32_t ulPin, eAnalogGain gain) ;
 
 /*
  * \brief Set the resolution of analogRead return values. Default is 10 bits (range from 0 to 1023).
