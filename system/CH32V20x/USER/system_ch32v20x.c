@@ -687,11 +687,11 @@ static void SetSysClockTo144_HSE(void)
     /* PCLK1 = HCLK */
     RCC->CFGR0 |= (uint32_t)RCC_PPRE1_DIV2;
 
-    /*  PLL configuration: PLLCLK = HSE * 18 = 144 MHz */
+    /*  PLL configuration: PLLCLK = HSE * 6 = 144 MHz */
     RCC->CFGR0 &= (uint32_t)((uint32_t)~(RCC_PLLSRC | RCC_PLLXTPRE |
                                         RCC_PLLMULL));
 
-    RCC->CFGR0 |= (uint32_t)(RCC_PLLSRC_HSE | RCC_PLLXTPRE_HSE | RCC_PLLMULL18);
+    RCC->CFGR0 |= (uint32_t)(RCC_PLLSRC_HSE | RCC_PLLXTPRE_HSE | RCC_PLLMULL6);
 
     /* Enable PLL */
     RCC->CTLR |= RCC_PLLON;
