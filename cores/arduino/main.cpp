@@ -8,7 +8,7 @@
 #include "task.h"
 
 #ifndef ARDUINO_LOOP_STACK_SIZE
-#define ARDUINO_LOOP_STACK_SIZE 512
+#define ARDUINO_LOOP_STACK_SIZE 1024
 #endif
 
 #ifndef USBD_STACK_SZ

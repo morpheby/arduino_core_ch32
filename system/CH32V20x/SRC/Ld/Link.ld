@@ -171,12 +171,12 @@ SECTIONS
 		PROVIDE( _ebss = .);
 	} >RAM AT>FLASH
 
-	PROVIDE( _end = _ebss);
+	PROVIDE( __HeapBase = _ebss);
 	PROVIDE( end = . );
 
     .stack ORIGIN(RAM) + LENGTH(RAM) - __stack_size :
     {
-        PROVIDE( _heap_end = . );   
+        PROVIDE( __HeapLimit = . );   
         . = ALIGN(4);
         PROVIDE(_susrstack = . );
         . = . + __stack_size;

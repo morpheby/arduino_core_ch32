@@ -180,13 +180,13 @@ int _write(int fd, char *buf, int size)
  *
  * @return  size: Data length
  */
-void *_sbrk(ptrdiff_t incr)
+__attribute__((weak)) void *_sbrk(ptrdiff_t incr)
 {
-    extern char _end[];
-    extern char _heap_end[];
-    static char *curbrk = _end;
+    extern char __HeapBase[];
+    extern char __HeapLimit[];
+    static char *curbrk = __HeapBase;
 
-    if ((curbrk + incr < _end) || (curbrk + incr > _heap_end))
+    if ((curbrk + incr < __HeapBase) || (curbrk + incr > __HeapLimit))
     return NULL - 1;
 
     curbrk += incr;
