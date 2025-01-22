@@ -97,7 +97,7 @@
 #define configCPU_CLOCK_HZ              SystemCoreClock
 #define configTICK_RATE_HZ              ( ( TickType_t ) 500 )
 #define configMAX_PRIORITIES            ( 15 )
-#define configMINIMAL_STACK_SIZE        ( ( unsigned short ) 256 ) /* Can be as low as 60 but some of the demo tasks that use this constant require it to be higher. */
+#define configMINIMAL_STACK_SIZE        ( ( unsigned short ) 128 ) /* Can be as low as 60 but some of the demo tasks that use this constant require it to be higher. */
 #define configTOTAL_HEAP_SIZE           ( ( size_t ) ( 10 * 1024 ) )
 #define configMAX_TASK_NAME_LEN         ( 16 )
 #define configUSE_TRACE_FACILITY        0
@@ -130,7 +130,7 @@
 #define configMAX_CO_ROUTINE_PRIORITIES   ( 2 )
 
 /* Software timer definitions. */
-#define configUSE_TIMERS                1
+#define configUSE_TIMERS                0
 #define configTIMER_TASK_PRIORITY       ( configMAX_PRIORITIES - 1 )
 #define configTIMER_QUEUE_LENGTH        4
 #define configTIMER_TASK_STACK_DEPTH    ( configMINIMAL_STACK_SIZE )
@@ -147,7 +147,7 @@ to exclude the API function. */
 #define INCLUDE_vTaskDelayUntil            1
 #define INCLUDE_vTaskDelay                 1
 #define INCLUDE_eTaskGetState              1
-#define INCLUDE_xTimerPendFunctionCall     1
+#define INCLUDE_xTimerPendFunctionCall     0
 #define INCLUDE_xTaskAbortDelay            1
 #define INCLUDE_xTaskGetHandle             1
 #define INCLUDE_xSemaphoreGetMutexHolder   1
