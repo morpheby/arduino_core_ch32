@@ -23,7 +23,44 @@ extern "C" {
 // #define TICK_FREQ_100Hz   10L
 // #define TICK_FREQ_10Hz    100L 
 
-#if !(USE_FREERTOS)
+#if USE_FREERTOS
+
+#include <FreeRTOS.h>
+#include <task.h>
+
+/**
+  * @brief  Function called wto read the current millisecond
+  * @param  None
+  * @retval None
+  */
+uint32_t getCurrentMillis(void)
+{
+  return xTaskGetTickCount() * portTICK_RATE_MS;
+}
+
+#if defined(CH32V20x) || defined(CH32V30x) || defined(CH32V30x_C) || defined(CH32V00x) || defined(CH32X035) || defined(CH32L10x) || defined(CH32VM00X)
+
+uint32_t getCurrentMicros(void)
+{
+  portENTER_CRITICAL();
+
+  uint64_t tms = SysTick->CMP;
+  uint64_t m0 = xTaskGetTickCount();
+  uint64_t u0 = SysTick->CNT;
+
+  // If interrupt is pending, assume tick+1
+  if ((SysTick->SR & 1) != 0) {
+    m0 += 1;
+  }
+
+  portEXIT_CRITICAL();
+
+  return (m0 * 1000 * portTICK_RATE_MS + ((tms - u0) / (configCPU_CLOCK_HZ / 1000000)));
+}
+
+#endif
+
+#else
 
 __IO uint64_t msTick=0;
 WEAK uint64_t GetTick(void)

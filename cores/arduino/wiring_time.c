@@ -29,12 +29,7 @@ extern "C" {
 
 uint32_t millis(void)
 {
-#if USE_FREERTOS
-  return xTaskGetTickCount() * portTICK_PERIOD_MS;
-#else
-  // ToDo: ensure no interrupts
   return getCurrentMillis();
-#endif
 }
 
 // Interrupt-compatible version of micros
