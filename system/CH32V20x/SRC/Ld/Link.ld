@@ -19,6 +19,7 @@ MEMORY
 /**/
 	FLASH (rx) : ORIGIN = 0x00000000, LENGTH = __flash_size
 	RAM (xrw) : ORIGIN = 0x20000000, LENGTH = __ram_size
+	FLASH_SLOW (r) : ORIGIN = __flash_size, LENGTH = 224K - __flash_size
  
   
 /* CH32V20x_D8 - CH32V203RB
@@ -183,6 +184,13 @@ SECTIONS
         PROVIDE( _eusrstack = .);
 		__freertos_irq_stack_top = .;
     } >RAM 
+
+
+	.flashSlow ORIGIN(FLASH_SLOW) :
+	{
+		KEEP(*(.flashSlow)) 
+	} > FLASH_SLOW
+
 
 }
 

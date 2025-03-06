@@ -22,6 +22,8 @@
 extern "C" {
 #endif
 
+#define FLASH_SLOW __attribute__((section (".flashSlow"))) 
+
 void pre_init(void) ;
 
 #ifdef __cplusplus
