@@ -19,6 +19,20 @@ extern uint32_t SystemCoreClock;          /* System Clock Frequency (Core Clock)
 /* System_Exported_Functions */  
 extern void SystemInit(void);
 extern void SystemCoreClockUpdate(void);
+extern void SetSysClock(void);
+extern void SetSysClockToHSE( void );
+extern void SetSysClockTo48_HSE( void );
+extern void SetSysClockTo56_HSE( void );
+extern void SetSysClockTo72_HSE( void );
+extern void SetSysClockTo96_HSE( void );
+extern void SetSysClockTo120_HSE( void );
+extern void SetSysClockTo144_HSE( void );
+extern void SetSysClockTo48_HSI( void );
+extern void SetSysClockTo56_HSI( void );
+extern void SetSysClockTo72_HSI( void );
+extern void SetSysClockTo96_HSI( void );
+extern void SetSysClockTo120_HSI( void );
+extern void SetSysClockTo144_HSI( void );
 
 #ifdef __cplusplus
 }
