@@ -907,7 +907,9 @@ void pwm_start(PinName pin, uint32_t PWM_freq, uint32_t value, TimerCompareForma
 
   HT = (HardwareTimer *)(HardwareTimer_Handle[index]->__this);
 
-  uint32_t channel = CH_PIN_CHANNEL(pinmap_function(pin, PinMap_TIM));
+  uint32_t pinFunction = pinmap_function(pin, PinMap_TIM);
+  pin_function(pin, pinFunction);
+  uint32_t channel = CH_PIN_CHANNEL(pinFunction);
 
   previousMode = HT->getMode(channel);
   if (previousMode != TIMER_OUTPUT_COMPARE_PWM1) {
