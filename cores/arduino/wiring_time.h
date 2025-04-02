@@ -22,6 +22,10 @@
 
 #include "clock.h"
 
+#if USE_FREERTOS
+#include <FreeRTOS.h>
+#endif
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -69,7 +73,11 @@ static inline void delayMicroseconds(uint32_t us)
   /* Number of ticks per millisecond */
   uint64_t tickPerMs = SysTick->CMP + 1;
   /* Number of ticks to count */
+  #if USE_FREERTOS
+  uint64_t nbTicks = ((us - ((us > 0) ? 1 : 0)) * tickPerMs) / (portTICK_PERIOD_MS * 1000);
+  #else
   uint64_t nbTicks = ((us - ((us > 0) ? 1 : 0)) * tickPerMs) / 1000;
+  #endif
   /* Number of elapsed ticks */
   uint64_t elapsedTicks = 0;
   __IO uint64_t oldTicks = currentTicks;
