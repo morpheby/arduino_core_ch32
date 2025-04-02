@@ -1593,14 +1593,14 @@ extern "C" {
     * @param  None
     * @retval None
     */
-  void TIM1_UP_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+  void TIM1_UP_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));
   void TIM1_UP_IRQHandler(void)
   {
     if (HardwareTimer_Handle[TIMER1_INDEX]) {
       HardwareTimer::updateCallback(&HardwareTimer_Handle[TIMER1_INDEX]->handle);
     }
   }
-  void TIM1_CC_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+  void TIM1_CC_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));
   void TIM1_CC_IRQHandler(void)
   {
     if (HardwareTimer_Handle[TIMER1_INDEX]) {
@@ -1617,7 +1617,7 @@ extern "C" {
     * @param  None
     * @retval None
     */
-  void TIM2_UP_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+  void TIM2_UP_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));
   void TIM2_UP_IRQHandler(void)
   {
     if (HardwareTimer_Handle[TIMER2_INDEX]) {
@@ -1625,7 +1625,7 @@ extern "C" {
     }
   }
 
-  void TIM2_CC_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+  void TIM2_CC_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));
   void TIM2_CC_IRQHandler(void)
   {
     if (HardwareTimer_Handle[TIMER2_INDEX]) {
@@ -1639,7 +1639,7 @@ extern "C" {
     * @param  None
     * @retval None
     */
-  void TIM2_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+  void TIM2_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));
   void TIM2_IRQHandler(void)
   {
     if (HardwareTimer_Handle[TIMER2_INDEX]) 
@@ -1658,7 +1658,7 @@ extern "C" {
     * @param  None
     * @retval None
     */
-  void TIM3_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast"))); 
+  void TIM3_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast"))); 
   void TIM3_IRQHandler(void)
   {
     if (HardwareTimer_Handle[TIMER3_INDEX]) {
@@ -1674,7 +1674,7 @@ extern "C" {
     * @param  None
     * @retval None
     */
-  void TIM4_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast"))); 
+  void TIM4_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast"))); 
   void TIM4_IRQHandler(void)
   {
     if (HardwareTimer_Handle[TIMER4_INDEX]) {
@@ -1690,7 +1690,7 @@ extern "C" {
     * @param  None
     * @retval None
     */
-  void TIM5_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast"))); 
+  void TIM5_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast"))); 
   void TIM5_IRQHandler(void)
   {
     if (HardwareTimer_Handle[TIMER5_INDEX]) {
@@ -1706,7 +1706,7 @@ extern "C" {
     * @param  None
     * @retval None
     */
-  void TIM6_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast"))); 
+  void TIM6_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast"))); 
   void TIM6_IRQHandler(void)
   {
     if (HardwareTimer_Handle[TIMER6_INDEX]) {
@@ -1722,7 +1722,7 @@ extern "C" {
     * @param  None
     * @retval None
     */
-  void TIM7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast"))); 
+  void TIM7_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast"))); 
   void TIM7_IRQHandler(void)
   {
     if (HardwareTimer_Handle[TIMER7_INDEX]) {
@@ -1738,14 +1738,14 @@ extern "C" {
     * @param  None
     * @retval None
     */
-  void TIM8_UP_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast"))); 
+  void TIM8_UP_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast"))); 
   void TIM8_UP_IRQHandler(void)
   {
     if (HardwareTimer_Handle[TIMER8_INDEX]) {
        HardwareTimer::updateCallback(&HardwareTimer_Handle[TIMER8_INDEX]->handle);
     }
   }
-  void TIM8_CC_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast"))); 
+  void TIM8_CC_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast"))); 
   void TIM8_CC_IRQHandler(void)
   {
     if (HardwareTimer_Handle[TIMER8_INDEX]) {
@@ -1760,14 +1760,14 @@ extern "C" {
     * @param  None
     * @retval None
     */
-  void TIM9_UP_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));  
+  void TIM9_UP_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));  
   void TIM9_UP_IRQHandler(void)
   {
     if (HardwareTimer_Handle[TIMER9_INDEX]) {
        HardwareTimer::updateCallback(&HardwareTimer_Handle[TIMER9_INDEX]->handle);
     }
   }
-  void TIM9_CC_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));    
+  void TIM9_CC_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));    
   void TIM9_CC_IRQHandler(void)
   {
     if(HardwareTimer_Handle[TIMER9_INDEX]){
@@ -1782,14 +1782,14 @@ extern "C" {
     * @param  None
     * @retval None
     */
-  void TIM10_UP_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));   
+  void TIM10_UP_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));   
   void TIM10_UP_IRQHandler(void)
   {
     if (HardwareTimer_Handle[TIMER10_INDEX]) {
        HardwareTimer::updateCallback(&HardwareTimer_Handle[TIMER10_INDEX]->handle);
     }
   }
-  void TIM10_CC_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));  
+  void TIM10_CC_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));  
   void TIM10_CC_IRQHandler(void)
   {
     if (HardwareTimer_Handle[TIMER10_INDEX]){

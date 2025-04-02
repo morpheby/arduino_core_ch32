@@ -225,7 +225,7 @@ void _gpio_exti_callback(uint16_t GPIO_Pin)
 extern "C" {
 #endif
 
-void EXTI7_0_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void EXTI7_0_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));
 void EXTI7_0_IRQHandler(void)
 {
    uint32_t pin;
@@ -250,9 +250,9 @@ void EXTI7_0_IRQHandler(void)
 extern "C" {
 #endif
 
-void EXTI7_0_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-void EXTI15_8_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-void EXTI25_16_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void EXTI7_0_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));
+void EXTI15_8_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));
+void EXTI25_16_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));
 
 void EXTI7_0_IRQHandler(void)
 {
@@ -305,13 +305,13 @@ void EXTI25_16_IRQHandler(void)
 extern "C" {
 #endif
 
-void EXTI0_IRQHandler(void)     __attribute__((interrupt("WCH-Interrupt-fast")));
-void EXTI1_IRQHandler(void)     __attribute__((interrupt("WCH-Interrupt-fast")));
-void EXTI2_IRQHandler(void)     __attribute__((interrupt("WCH-Interrupt-fast")));
-void EXTI3_IRQHandler(void)     __attribute__((interrupt("WCH-Interrupt-fast")));
-void EXTI4_IRQHandler(void)     __attribute__((interrupt("WCH-Interrupt-fast")));
-void EXTI9_5_IRQHandler(void)   __attribute__((interrupt("WCH-Interrupt-fast")));
-void EXTI15_10_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void EXTI0_IRQHandler(void)     __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));
+void EXTI1_IRQHandler(void)     __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));
+void EXTI2_IRQHandler(void)     __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));
+void EXTI3_IRQHandler(void)     __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));
+void EXTI4_IRQHandler(void)     __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));
+void EXTI9_5_IRQHandler(void)   __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));
+void EXTI15_10_IRQHandler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));
 /**
   * @brief This function handles external line 0 interrupt request.
   * @param  None

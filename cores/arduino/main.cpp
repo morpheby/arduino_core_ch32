@@ -91,7 +91,7 @@ extern "C" void vApplicationMallocFailedHook(void) {
 /*
  * \brief Main entry point of Arduino application
  */
-int main( void )
+int __attribute__((used)) main( void )
 {
     pre_init( );
     NVIC_PriorityGroupConfig(1);

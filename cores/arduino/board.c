@@ -5,7 +5,7 @@ extern "C" {
 #endif
 
 
-WEAK void pre_init(void)
+WEAK __attribute__((used)) void pre_init(void)
 {
   hw_config_init();
 }

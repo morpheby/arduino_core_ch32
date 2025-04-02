@@ -67,7 +67,8 @@ env.Append(
         "-ffunction-sections",
         "-fdata-sections",
         "-fno-common",
-        # "-flto",
+        "-flto",
+        "-fwhole-program",
     ],
 
     CXXFLAGS=[
@@ -87,7 +88,8 @@ env.Append(
         "-fdata-sections",
         "-fno-common",
         "-Wl,--gc-sections",
-        # "-flto",
+        "-flto",
+        "-fwhole-program",
         "--specs=nosys.specs",
         "--specs=nano.specs",
         "-nostartfiles",

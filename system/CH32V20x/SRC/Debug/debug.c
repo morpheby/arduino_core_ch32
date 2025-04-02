@@ -180,7 +180,7 @@ int _write(int fd, char *buf, int size)
  *
  * @return  size: Data length
  */
-__attribute__((weak)) void *_sbrk(ptrdiff_t incr)
+__attribute__((externally_visible, weak)) void *_sbrk(ptrdiff_t incr)
 {
     extern char __HeapBase[];
     extern char __HeapLimit[];
@@ -193,5 +193,5 @@ __attribute__((weak)) void *_sbrk(ptrdiff_t incr)
     return curbrk - incr;
 }
 
-void _fini() {}
-void _init() {}
+__attribute__((externally_visible)) void _fini() {}
+__attribute__((externally_visible)) void _init() {}

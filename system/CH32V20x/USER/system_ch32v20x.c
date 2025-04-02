@@ -90,7 +90,7 @@ void SetSysClockTo144_HSI( void );
  *
  * @return  none
  */
-void SystemInit (void)
+void __attribute__((externally_visible)) SystemInit (void)
 {
   RCC->CTLR |= (uint32_t)0x00000001;
   RCC->CFGR0 &= (uint32_t)0xF8FF0000;
