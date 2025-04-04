@@ -72,6 +72,7 @@ env.Append(
     ],
 
     CXXFLAGS=[
+        "-Wno-volatile",
         "-fno-threadsafe-statics",
         "-fno-rtti",
         "-fno-exceptions",

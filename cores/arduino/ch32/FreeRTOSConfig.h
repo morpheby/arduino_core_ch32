@@ -98,7 +98,6 @@
 #define configTICK_RATE_HZ              ( ( TickType_t ) 500 )
 #define configMAX_PRIORITIES            ( 15 )
 #define configMINIMAL_STACK_SIZE        ( ( unsigned short ) 128 ) /* Can be as low as 60 but some of the demo tasks that use this constant require it to be higher. */
-#define configTOTAL_HEAP_SIZE           ( ( size_t ) ( 10 * 1024 ) )
 #define configMAX_TASK_NAME_LEN         ( 16 )
 #define configUSE_TRACE_FACILITY        0
 #define configUSE_16_BIT_TICKS          0
@@ -114,7 +113,11 @@
 #define configUSE_QUEUE_SETS            0
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION 1
 
-#if __NEWLIB__
+#ifndef FREERTOS_NO_REENT
+#define FREERTOS_NO_REENT 0
+#endif
+
+#if __NEWLIB__ && !(FREERTOS_NO_REENT)
 #define configUSE_NEWLIB_REENTRANT      1
 #else
 #define configUSE_NEWLIB_REENTRANT      0

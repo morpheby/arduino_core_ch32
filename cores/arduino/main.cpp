@@ -46,8 +46,10 @@ static void usb_device_task(void *param) {
 [[noreturn]] static void loopFn() {
 #if USE_FREERTOS && USE_TINYUSB
     // Create a task for tinyusb device stack
-    xTaskCreate(usb_device_task, "usbd", USBD_STACK_SZ, NULL,
-                configMAX_PRIORITIES - 1, NULL);
+    if (xTaskCreate(usb_device_task, "usbd", USBD_STACK_SZ, NULL,
+                    configMAX_PRIORITIES - 1, NULL) != pdPASS) {
+        puts("Couldn't start USB stack\n");
+    }
 #endif
     setup();
     for (;;) {
@@ -81,9 +83,7 @@ extern "C" void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskNa
 }
 
 extern "C" void vApplicationMallocFailedHook(void) {
-    taskDISABLE_INTERRUPTS();
     printf("Not enough memory");
-    abort();
 }
 
 #endif
