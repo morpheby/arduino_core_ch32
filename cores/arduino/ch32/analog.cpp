@@ -26,10 +26,10 @@ extern "C" {
 #endif
 
 #if USE_FREERTOS
-static bool conversionDone = false;
-static TaskHandle_t adcWaitingTaskHandle;
+static volatile bool conversionDone = false;
+static volatile TaskHandle_t adcWaitingTaskHandle;
 
-__attribute__((interrupt))
+__attribute__((externally_visible, interrupt))
 void ADC1_2_IRQHandler(void) {
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
   if (adcWaitingTaskHandle) {
