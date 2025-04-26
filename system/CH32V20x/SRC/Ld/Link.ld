@@ -19,7 +19,7 @@ MEMORY
 /**/
 	FLASH (rx) : ORIGIN = 0x00000000, LENGTH = __flash_size
 	RAM (xrw) : ORIGIN = 0x20000000, LENGTH = __ram_size
-	FLASH_SLOW (r) : ORIGIN = __flash_size, LENGTH = 224K - __flash_size
+	DFLASH (rx) : ORIGIN = __flash_size, LENGTH = 224K - __flash_size
  
   
 /* CH32V20x_D8 - CH32V203RB
@@ -78,7 +78,7 @@ SECTIONS
 	  PROVIDE_HIDDEN (__preinit_array_start = .);
 	  KEEP (*(.preinit_array))
 	  PROVIDE_HIDDEN (__preinit_array_end = .);
-	} >FLASH AT>FLASH 
+	} >FLASH AT>FLASH
 	
 	.init_array     :
 	{
@@ -86,7 +86,7 @@ SECTIONS
 	  KEEP (*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
 	  KEEP (*(.init_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .ctors))
 	  PROVIDE_HIDDEN (__init_array_end = .);
-	} >FLASH AT>FLASH 
+	} >FLASH AT>FLASH
 	
 	.fini_array     :
 	{
@@ -94,7 +94,7 @@ SECTIONS
 	  KEEP (*(SORT_BY_INIT_PRIORITY(.fini_array.*) SORT_BY_INIT_PRIORITY(.dtors.*)))
 	  KEEP (*(.fini_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .dtors))
 	  PROVIDE_HIDDEN (__fini_array_end = .);
-	} >FLASH AT>FLASH 
+	} >FLASH AT>FLASH
 	
 	.ctors          :
 	{
@@ -116,7 +116,7 @@ SECTIONS
 	  KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .ctors))
 	  KEEP (*(SORT(.ctors.*)))
 	  KEEP (*(.ctors))
-	} >FLASH AT>FLASH 
+	} >FLASH AT>FLASH
 	
 	.dtors          :
 	{
@@ -125,19 +125,19 @@ SECTIONS
 	  KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .dtors))
 	  KEEP (*(SORT(.dtors.*)))
 	  KEEP (*(.dtors))
-	} >FLASH AT>FLASH 
+	} >FLASH AT>FLASH
 
 	.dalign :
 	{
 		. = ALIGN(4);
 		PROVIDE(_data_vma = .);
-	} >RAM AT>FLASH	
+	} >RAM AT>DFLASH	
 
 	.dlalign :
 	{
 		. = ALIGN(4); 
 		PROVIDE(_data_lma = .);
-	} >FLASH AT>FLASH
+	} >DFLASH AT>DFLASH
 
 	.data :
 	{
@@ -157,7 +157,7 @@ SECTIONS
     	*(.srodata .srodata.*)
     	. = ALIGN(4);
 		PROVIDE( _edata = .);
-	} >RAM AT>FLASH
+	} >RAM AT>DFLASH
 
 	.bss :
 	{
@@ -170,7 +170,7 @@ SECTIONS
 		*(COMMON*)
 		. = ALIGN(4);
 		PROVIDE( _ebss = .);
-	} >RAM AT>FLASH
+	} >RAM AT>DFLASH
 
 	PROVIDE( __HeapBase = _ebss);
 	PROVIDE( end = . );
@@ -185,12 +185,13 @@ SECTIONS
 		PROVIDE( __freertos_irq_stack_top = .);
     } >RAM 
 
-
-	.flashSlow ORIGIN(FLASH_SLOW) :
+	.dflash :
 	{
-		KEEP(*(.flashSlow)) 
-	} > FLASH_SLOW
-
+        . = ALIGN(4);
+		KEEP(*(.dflash))
+		KEEP(*(.dflash.*))
+        . = ALIGN(4);
+	} >DFLASH AT>DFLASH 
 
 }
 

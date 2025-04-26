@@ -22,7 +22,13 @@
 extern "C" {
 #endif
 
-#define FLASH_SLOW __attribute__((section (".flashSlow"))) 
+#define DFLASH __attribute__((section (".dflash")))
+
+#if USE_FREERTOS
+#define INTERRUPT __attribute__((interrupt))
+#else
+#define INTERRUPT __attribute__((interrupt("WCH-Interrupt-fast")))
+#endif
 
 void pre_init(void) ;
 
