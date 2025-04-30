@@ -193,6 +193,14 @@ SECTIONS
         . = ALIGN(4);
 	} >DFLASH AT>DFLASH 
 
+	.iflash :
+	{
+        . = ALIGN(4);
+		KEEP(*(.iflash))
+		KEEP(*(.iflash.*))
+        . = ALIGN(4);
+	} >FLASH AT>FLASH 
+
 }
 
 
