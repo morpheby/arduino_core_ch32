@@ -118,7 +118,7 @@ uint32_t getCurrentMicros(void)
  *
  * @return  none
  */
-void SysTick_Handler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));
+void SysTick_Handler(void) ISR;
 void SysTick_Handler(void)
 {
   msTick+=TICK_FREQ_1KHz;
@@ -170,7 +170,7 @@ uint32_t getCurrentMicros(void)
  *
  * @return  none
  */
-void SysTick_Handler(void) __attribute__((externally_visible, interrupt("WCH-Interrupt-fast")));
+void SysTick_Handler(void) ISR;
 void SysTick_Handler(void)
 {
   SysTick->CTLR=0;

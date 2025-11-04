@@ -29,8 +29,7 @@ extern "C" {
 static volatile bool conversionDone = false;
 static volatile TaskHandle_t adcWaitingTaskHandle;
 
-__attribute__((externally_visible, interrupt))
-void ADC1_2_IRQHandler(void) {
+ISR void ADC1_2_IRQHandler(void) {
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
   if (adcWaitingTaskHandle) {
     vTaskNotifyGiveFromISR(adcWaitingTaskHandle, &xHigherPriorityTaskWoken);

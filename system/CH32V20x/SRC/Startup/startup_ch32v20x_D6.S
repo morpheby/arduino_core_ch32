@@ -8,6 +8,11 @@
 ;* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
 ;* SPDX-License-Identifier: Apache-2.0
 ;*******************************************************************************/
+
+#if defined( FREERTOS_USE_ISP ) && ( FREERTOS_USE_ISP != 0 )
+	.extern Global_IRQ_Handler
+#endif
+	
 	.section	.init,"ax",@progbits
 	.global	_start
 	.align	1
@@ -65,26 +70,41 @@ handle_reset:
     li t0, 0x1f
     csrw 0xbc0, t0
 
-    #if defined(__PIO_BUILD_FREERTOS__) || defined(__PIO_BUILD_HARMONY_LITEOS__) || defined(__PIO_BUILD_RT_THREAD__) || defined(__PIO_BUILD_TENCENT_OS__)
-    /* Enable nested  */
-    li t0, 0x2
-    csrw 0x804, t0
+    #if defined( WCH_HPE_ENABLED ) && ( WCH_HPE_ENABLED != 0 )
 
-    /* Enable interrupt */
-    li t0, 0x1800
-    csrw mstatus, t0
-    #else
     /* Enable nested and hardware stack */
 	li t0, 0x3
 	csrw 0x804, t0
 
+	#else
+
+	/* Enable nested  */
+    li t0, 0x2
+    csrw 0x804, t0
+
+	#endif
+
+    #if defined(__PIO_BUILD_FREERTOS__) || defined(__PIO_BUILD_HARMONY_LITEOS__) || defined(__PIO_BUILD_RT_THREAD__) || defined(__PIO_BUILD_TENCENT_OS__)
+
+    /* Enable interrupt */
+    li t0, 0x1800
+    csrw mstatus, t0
+
+    #else
+	
     /* Enable interrupt */
    	li t0, 0x88          
     csrw mstatus, t0
+	
     #endif
 
+#if !defined( FREERTOS_USE_ISP ) && ( FREERTOS_USE_ISP != 0 )
+	la t0, Global_IRQ_Handler
+#else
+	// Use vector table
  	la t0, __MCU_Vectors
-    ori t0, t0, 3           
+    ori t0, t0, 3
+#endif
 	csrw mtvec, t0
 
     la a0, __libc_fini_array

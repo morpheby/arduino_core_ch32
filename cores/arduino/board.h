@@ -24,10 +24,12 @@ extern "C" {
 
 #define DFLASH __attribute__((section (".dflash")))
 
-#if USE_FREERTOS
-#define INTERRUPT __attribute__((interrupt))
+#if defined( FREERTOS_USE_ISP ) && ( FREERTOS_USE_ISP != 0 )
+#define ISR
+#elif defined( WCH_HPE_ENABLED ) && ( WCH_HPE_ENABLED != 0 )
+#define ISR __attribute__((externally_visible, used, interrupt("WCH-interrupt-fast")))
 #else
-#define INTERRUPT __attribute__((interrupt("WCH-Interrupt-fast")))
+#define ISR __attribute__((externally_visible, used, interrupt()))
 #endif
 
 void pre_init(void) ;

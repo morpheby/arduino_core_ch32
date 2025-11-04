@@ -180,6 +180,7 @@ SECTIONS
         PROVIDE( __HeapLimit = . );   
         . = ALIGN(4);
         PROVIDE(_susrstack = . );
+		PROVIDE( __freertos_irq_stack = .);
         . = . + __stack_size;
         PROVIDE( _eusrstack = .);
 		PROVIDE( __freertos_irq_stack_top = .);

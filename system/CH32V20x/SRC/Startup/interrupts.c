@@ -1,115 +1,125 @@
 
-typedef void __attribute__((interrupt, used)) (*VectorFunc)();
+#if defined( FREERTOS_USE_ISP ) && ( FREERTOS_USE_ISP != 0 )
+#define ISR
+#elif defined( WCH_HPE_ENABLED ) && ( WCH_HPE_ENABLED != 0 )
+#define ISR __attribute__((externally_visible, used, interrupt("WCH-interrupt-fast")))
+#else
+#define ISR __attribute__((externally_visible, used, interrupt()))
+#endif
 
-void __attribute__((interrupt, externally_visible, weak, used)) NMI_Handler() { while (1); }
+#define WEAK __attribute__((weak))
 
-void __attribute__((interrupt, externally_visible, weak, used)) HardFault_Handler() { while (1); }
+typedef void ISR (*VectorFunc)();
 
-void __attribute__((interrupt, externally_visible, weak, used)) Ecall_M_Mode_Handler() { while (1); }
+void ISR WEAK NMI_Handler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) Ecall_U_Mode_Handler() { while (1); }
+void ISR WEAK HardFault_Handler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) Break_Point_Handler() { while (1); }
+void ISR WEAK Ecall_M_Mode_Handler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) SysTick_Handler() { while (1); }
+void ISR WEAK Ecall_U_Mode_Handler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) SW_Handler() { while (1); }
+void ISR WEAK Break_Point_Handler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) WWDG_IRQHandler() { while (1); }
+void ISR WEAK SysTick_Handler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) PVD_IRQHandler() { while (1); }
+void ISR WEAK SW_Handler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) TAMPER_IRQHandler() { while (1); }
+void ISR WEAK WWDG_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) RTC_IRQHandler() { while (1); }
+void ISR WEAK PVD_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) FLASH_IRQHandler() { while (1); }
+void ISR WEAK TAMPER_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) RCC_IRQHandler() { while (1); }
+void ISR WEAK RTC_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) EXTI0_IRQHandler() { while (1); }
+void ISR WEAK FLASH_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) EXTI1_IRQHandler() { while (1); }
+void ISR WEAK RCC_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) EXTI2_IRQHandler() { while (1); }
+void ISR WEAK EXTI0_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) EXTI3_IRQHandler() { while (1); }
+void ISR WEAK EXTI1_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) EXTI4_IRQHandler() { while (1); }
+void ISR WEAK EXTI2_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) DMA1_Channel1_IRQHandler() { while (1); }
+void ISR WEAK EXTI3_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) DMA1_Channel2_IRQHandler() { while (1); }
+void ISR WEAK EXTI4_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) DMA1_Channel3_IRQHandler() { while (1); }
+void ISR WEAK DMA1_Channel1_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) DMA1_Channel4_IRQHandler() { while (1); }
+void ISR WEAK DMA1_Channel2_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) DMA1_Channel5_IRQHandler() { while (1); }
+void ISR WEAK DMA1_Channel3_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) DMA1_Channel6_IRQHandler() { while (1); }
+void ISR WEAK DMA1_Channel4_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) DMA1_Channel7_IRQHandler() { while (1); }
+void ISR WEAK DMA1_Channel5_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) ADC1_2_IRQHandler() { while (1); }
+void ISR WEAK DMA1_Channel6_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) USB_HP_CAN1_TX_IRQHandler() { while (1); }
+void ISR WEAK DMA1_Channel7_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) USB_LP_CAN1_RX0_IRQHandler() { while (1); }
+void ISR WEAK ADC1_2_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) CAN1_RX1_IRQHandler() { while (1); }
+void ISR WEAK USB_HP_CAN1_TX_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) CAN1_SCE_IRQHandler() { while (1); }
+void ISR WEAK USB_LP_CAN1_RX0_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) EXTI9_5_IRQHandler() { while (1); }
+void ISR WEAK CAN1_RX1_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) TIM1_BRK_IRQHandler() { while (1); }
+void ISR WEAK CAN1_SCE_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) TIM1_UP_IRQHandler() { while (1); }
+void ISR WEAK EXTI9_5_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) TIM1_TRG_COM_IRQHandler() { while (1); }
+void ISR WEAK TIM1_BRK_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) TIM1_CC_IRQHandler() { while (1); }
+void ISR WEAK TIM1_UP_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) TIM2_IRQHandler() { while (1); }
+void ISR WEAK TIM1_TRG_COM_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) TIM3_IRQHandler() { while (1); }
+void ISR WEAK TIM1_CC_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) TIM4_IRQHandler() { while (1); }
+void ISR WEAK TIM2_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) I2C1_EV_IRQHandler() { while (1); }
+void ISR WEAK TIM3_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) I2C1_ER_IRQHandler() { while (1); }
+void ISR WEAK TIM4_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) I2C2_EV_IRQHandler() { while (1); }
+void ISR WEAK I2C1_EV_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) I2C2_ER_IRQHandler() { while (1); }
+void ISR WEAK I2C1_ER_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) SPI1_IRQHandler() { while (1); }
+void ISR WEAK I2C2_EV_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) SPI2_IRQHandler() { while (1); }
+void ISR WEAK I2C2_ER_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) USART1_IRQHandler() { while (1); }
+void ISR WEAK SPI1_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) USART2_IRQHandler() { while (1); }
+void ISR WEAK SPI2_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) USART3_IRQHandler() { while (1); }
+void ISR WEAK USART1_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) EXTI15_10_IRQHandler() { while (1); }
+void ISR WEAK USART2_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) RTCAlarm_IRQHandler() { while (1); }
+void ISR WEAK USART3_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) USBWakeUp_IRQHandler() { while (1); }
+void ISR WEAK EXTI15_10_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) USBHD_IRQHandler() { while (1); }
+void ISR WEAK RTCAlarm_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) USBHDWakeUp_IRQHandler() { while (1); }
+void ISR WEAK USBWakeUp_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) UART4_IRQHandler() { while (1); }
+void ISR WEAK USBHD_IRQHandler() { while (1); }
 
-void __attribute__((interrupt, externally_visible, weak, used)) DMA1_Channel8_IRQHandler() { while (1); }
+void ISR WEAK USBHDWakeUp_IRQHandler() { while (1); }
 
-void _start();
+void ISR WEAK UART4_IRQHandler() { while (1); }
+
+void ISR WEAK DMA1_Channel8_IRQHandler() { while (1); }
+
+extern void _start();
 
 __attribute__((section(".vector"), externally_visible))
 volatile const VectorFunc __MCU_Vectors[] = {
