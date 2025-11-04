@@ -11,6 +11,7 @@
  *******************************************************************************
  */
 #include "analog.h"
+#include "board.h"
 #include "ch32yyxx_adc.h"
 #include "PinAF_ch32yyxx.h"
 
