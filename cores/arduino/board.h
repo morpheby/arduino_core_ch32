@@ -27,7 +27,7 @@ extern "C" {
 #if defined( FREERTOS_USE_ISP ) && ( FREERTOS_USE_ISP != 0 )
 #define ISR  __attribute__((externally_visible, used))
 #elif defined( WCH_HPE_ENABLED ) && ( WCH_HPE_ENABLED != 0 )
-#define ISR __attribute__((externally_visible, used, interrupt("WCH-interrupt-fast")))
+#define ISR __attribute__((externally_visible, used, interrupt("WCH-Interrupt-fast")))
 #else
 #define ISR __attribute__((externally_visible, used, interrupt()))
 #endif
