@@ -98,7 +98,7 @@ handle_reset:
 	
     #endif
 
-#if !defined( FREERTOS_USE_ISP ) && ( FREERTOS_USE_ISP != 0 )
+#if defined( FREERTOS_USE_ISP ) && ( FREERTOS_USE_ISP != 0 )
 	la t0, Global_IRQ_Handler
 #else
 	// Use vector table
