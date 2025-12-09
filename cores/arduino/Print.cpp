@@ -243,38 +243,41 @@ extern "C" {
         #if defined(UART_MODULE_ENABLED) && !defined(UART_MODULE_ONLY)
         uart_debug_write((uint8_t *)ptr, (uint32_t)len);
         #elif (SDI_PRINT == SDI_PR_OPEN)
-        int writeSize = size;
-    
-        do
         {
-    
-            /**
-             * data0  data1 8 byte
-             * data0 The storage length of the lowest byte, with a maximum of 7 bytes.
-             */
-    
-            while( (*(DEBUG_DATA0_ADDRESS) != 0u))
-            {
-    
-            }
-    
-            if(writeSize>7)
-            {
-                *(DEBUG_DATA1_ADDRESS) = (*(buf+i+3)) | (*(buf+i+4)<<8) | (*(buf+i+5)<<16) | (*(buf+i+6)<<24);
-                *(DEBUG_DATA0_ADDRESS) = (7u) | (*(buf+i)<<8) | (*(buf+i+1)<<16) | (*(buf+i+2)<<24);
-    
-                i += 7;
-                writeSize -= 7;
-            }
-            else
-            {
-                *(DEBUG_DATA1_ADDRESS) = (*(buf+i+3)) | (*(buf+i+4)<<8) | (*(buf+i+5)<<16) | (*(buf+i+6)<<24);
-                *(DEBUG_DATA0_ADDRESS) = (writeSize) | (*(buf+i)<<8) | (*(buf+i+1)<<16) | (*(buf+i+2)<<24);
-    
-                writeSize = 0;
-            }
-    
-        } while (writeSize);        
+          int writeSize = len;
+          int i = 0;
+      
+          do
+          {
+      
+              /**
+               * data0  data1 8 byte
+               * data0 The storage length of the lowest byte, with a maximum of 7 bytes.
+               */
+      
+              while( (*(DEBUG_DATA0_ADDRESS) != 0u))
+              {
+      
+              }
+      
+              if(writeSize>7)
+              {
+                  *(DEBUG_DATA1_ADDRESS) = (*(ptr+i+3)) | (*(ptr+i+4)<<8) | (*(ptr+i+5)<<16) | (*(ptr+i+6)<<24);
+                  *(DEBUG_DATA0_ADDRESS) = (7u) | (*(ptr+i)<<8) | (*(ptr+i+1)<<16) | (*(ptr+i+2)<<24);
+      
+                  i += 7;
+                  writeSize -= 7;
+              }
+              else
+              {
+                  *(DEBUG_DATA1_ADDRESS) = (*(ptr+i+3)) | (*(ptr+i+4)<<8) | (*(ptr+i+5)<<16) | (*(ptr+i+6)<<24);
+                  *(DEBUG_DATA0_ADDRESS) = (writeSize) | (*(ptr+i)<<8) | (*(ptr+i+1)<<16) | (*(ptr+i+2)<<24);
+      
+                  writeSize = 0;
+              }
+      
+          } while (writeSize);        
+        }
         #endif
         break;
       default:

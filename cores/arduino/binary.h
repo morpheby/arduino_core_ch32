@@ -24,6 +24,8 @@
 extern "C" {
 #endif
 
+#ifndef NO_ARDUINO_BINARY_CONSTANTS
+
 #define B0 0
 #define B00 0
 #define B000 0
@@ -534,6 +536,8 @@ extern "C" {
 #define B11111101 253
 #define B11111110 254
 #define B11111111 255
+
+#endif // NO_ARDUINO_BINARY_CONSTANTS
 
 #ifdef __cplusplus
 }

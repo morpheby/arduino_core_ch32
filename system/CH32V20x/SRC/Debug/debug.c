@@ -13,9 +13,6 @@
 static uint8_t  p_us = 0;
 static uint16_t p_ms = 0;
 
-#define DEBUG_DATA0_ADDRESS  ((volatile uint32_t*)0xE0000380)
-#define DEBUG_DATA1_ADDRESS  ((volatile uint32_t*)0xE0000384)
-
 /*********************************************************************
  * @fn      Delay_Init
  *
