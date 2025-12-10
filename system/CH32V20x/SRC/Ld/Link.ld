@@ -47,11 +47,28 @@ SECTIONS
 		_einit = .;
 	} >FLASH AT>FLASH
 
-  .vector :
-  {
-      *(.vector);
-	  . = ALIGN(64);
-  } >FLASH AT>FLASH
+	.vector :
+	{
+		*(.vector);
+		. = ALIGN(64);
+	} >FLASH AT>FLASH
+
+	.dflash :
+	{
+        . = ALIGN(4);
+		KEEP(*(.dflash))
+		KEEP(*(.dflash.*))
+
+        . = ALIGN(4);
+	} >DFLASH AT>DFLASH 
+
+	.iflash :
+	{
+        . = ALIGN(4);
+		KEEP(*(.iflash))
+		KEEP(*(.iflash.*))
+        . = ALIGN(4);
+	} >FLASH AT>FLASH 
 
 	.text :
 	{
@@ -185,22 +202,6 @@ SECTIONS
         PROVIDE( _eusrstack = .);
 		PROVIDE( __freertos_irq_stack_top = .);
     } >RAM 
-
-	.dflash :
-	{
-        . = ALIGN(4);
-		KEEP(*(.dflash))
-		KEEP(*(.dflash.*))
-        . = ALIGN(4);
-	} >DFLASH AT>DFLASH 
-
-	.iflash :
-	{
-        . = ALIGN(4);
-		KEEP(*(.iflash))
-		KEEP(*(.iflash.*))
-        . = ALIGN(4);
-	} >FLASH AT>FLASH 
 
 }
 
