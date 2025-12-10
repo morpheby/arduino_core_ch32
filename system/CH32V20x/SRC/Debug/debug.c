@@ -211,5 +211,5 @@ __attribute__((externally_visible, weak)) void *_sbrk(ptrdiff_t incr)
     return curbrk - incr;
 }
 
-__attribute__((externally_visible)) void _fini() {}
-__attribute__((externally_visible)) void _init() {}
+__attribute__((externally_visible, used)) void _fini() {}
+__attribute__((externally_visible, used)) void _init() {}
