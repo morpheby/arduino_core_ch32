@@ -22,7 +22,7 @@ kinds of creative coding, interactive objects, spaces or physical experiences.
 http://arduino.cc/en/Reference/HomePage
 """
 
-from os.path import isdir, join
+from os.path import isdir, join, isfile
 import sys
 
 from SCons.Script import DefaultEnvironment
@@ -32,7 +32,7 @@ IS_MAC = sys.platform.startswith("darwin")
 env = DefaultEnvironment()
 platform = env.PioPlatform()
 board = env.BoardConfig()
-mcu = env.BoardConfig().get("build.mcu")
+mcu = board.get("build.mcu")
 if mcu.startswith("ch32x03"):
     chip_series: str = board.get("build.series", "").upper()
 else:
@@ -94,6 +94,8 @@ env.Append(
         "--specs=nosys.specs",
         "--specs=nano.specs",
         "-nostartfiles",
+        "-Wl,--defsym=__FLASH_SIZE=%s" % str(board.get("upload.maximum_size", 0)),
+        "-Wl,--defsym=__RAM_SIZE=%s" % str(board.get("upload.maximum_ram_size", 0)),
         '-Wl,-Map="%s"' % join("${BUILD_DIR}", "${PROGNAME}.map")
     ],
 
@@ -106,7 +108,11 @@ env.Append(
         "NDEBUG"
     ],
 
-    # LIBS is handled in _LIBFLAGS below
+    # LIBS must be handled in _LIBFLAGS below if LTO is disabled
+    LIBS = [
+        "c",
+        "printf" if not IS_MAC else ""
+    ],
 
     LIBSOURCE_DIRS=[
         join(FRAMEWORK_DIR, "libraries")
@@ -168,6 +174,15 @@ def configure_usb_flags(cpp_defines):
         ("USB_PRODUCT", '\\"%s\\"' % usb_product),
     ])
 
+    # Additional configuration to reduce firmware size. This gets simple TinyUSB firmwares to run well under 32K.
+    # The core doesn't use its own tusb_config so the defaults kick in, which enable video streaming interface code (??) and other stuff we don't use
+    # These add big code sizes!
+    env.Append(CPPDEFINES=[
+        ("CFG_TUD_VIDEO", 0), # these two save about 5K!
+        ("CFG_TUD_VIDEO_STREAMING", 0),
+        # ("CFG_TUD_MSC", 0) # saves about 2K but some people may actually use this (USB flash drive)
+    ])
+
 #
 # Process configuration flags
 #
@@ -205,22 +220,28 @@ if variant != "":
         CPPPATH=[
             join(variants_dir, variant)
         ],
-        LDSCRIPT_PATH=join(FRAMEWORK_DIR, "system", chip_series, "SRC", "Ld", "Link.ld"),
-
     )
+    # set the default linker script for the variant (based on chip series) only if not set already
+    if not board.get("build.ldscript", ""):
+        env.Replace(LDSCRIPT_PATH=join(FRAMEWORK_DIR, "system", chip_series, "SRC", "Ld", "Link.ld"))
+        if not isfile(env.subst(env["LDSCRIPT_PATH"])):
+            print("Warning! Cannot find linker script for the current target!\n")
+
     env.BuildSources(
         join("$BUILD_DIR", "FrameworkArduinoVariant"),
         join(variants_dir, variant)
     )
 
-# Startup files and debug.c require this to be built using BuildSources or with -Wl,-whole-archive
-pre_libs = "-lprintf" if not IS_MAC else ""
-env.Prepend(_LIBFLAGS="%s -Wl,--whole-archive " % pre_libs)
-env.Append(_LIBFLAGS=" -Wl,--no-whole-archive -lc")
+# Startup files and debug.c require this to be built using BuildSources (enables LTO) or with -Wl,-whole-archive
+# for now, we always build with LTO on as it reduces firmware sizes and doesn't cause linker issues (e.g. missing interrupt handlers) 
+# thank to env.BuildSources() instead of env.BuildLibrary(). This old case if for reference only.
+# pre_libs = "-lprintf" if not IS_MAC else ""
+# env.Prepend(_LIBFLAGS="%s -Wl,--whole-archive " % pre_libs)
+# env.Append(_LIBFLAGS=" -Wl,--no-whole-archive -lc")
 
-libs.append(env.BuildLibrary(
+env.BuildSources(
     join("$BUILD_DIR", "FrameworkArduino"),
     join(FRAMEWORK_DIR, "cores", "arduino"),
-))
+)
 
 env.Prepend(LIBS=libs)
