@@ -235,14 +235,14 @@ if variant != "":
 # Startup files and debug.c require this to be built using BuildSources (enables LTO) or with -Wl,-whole-archive
 # for now, we always build with LTO on as it reduces firmware sizes and doesn't cause linker issues (e.g. missing interrupt handlers) 
 # thank to env.BuildSources() instead of env.BuildLibrary(). This old case if for reference only.
-pre_libs = "-lprintf" if not IS_MAC else ""
-env.Append(_LIBFLAGS="%s -Wl,--whole-archive " % pre_libs)
-env.Append(_LIBFLAGS=" -Wl,--no-whole-archive -lc")
-libs.append(env.BuildLibrary(
-#env.BuildSources(
+#pre_libs = "-lprintf" if not IS_MAC else ""
+#env.Append(_LIBFLAGS="%s -Wl,--whole-archive " % pre_libs)
+#env.Append(_LIBFLAGS=" -Wl,--no-whole-archive -lc")
+#libs.append(env.BuildLibrary(
+env.BuildSources(
     join("$BUILD_DIR", "FrameworkArduino"),
     join(FRAMEWORK_DIR, "cores", "arduino"),
-#)
-))
+)
+#))
 
 env.Prepend(LIBS=libs)
