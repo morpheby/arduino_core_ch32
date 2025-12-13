@@ -112,6 +112,7 @@
 #define configGENERATE_RUN_TIME_STATS   0
 #define configUSE_QUEUE_SETS            0
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION 1
+#define configUSE_POSIX_ERRNO           1
 
 #ifndef FREERTOS_NO_REENT
 #define FREERTOS_NO_REENT 0

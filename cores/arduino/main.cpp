@@ -80,11 +80,16 @@ extern "C" void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskNa
     taskDISABLE_INTERRUPTS();
     puts("Stack overflow in task ");
     puts(pcTaskName);
-    abort();
+    while(1) { }
 }
 
 extern "C" void vApplicationMallocFailedHook(void) {
-    puts("Not enough memory");
+    if (xPortIsInsideInterrupt()) {
+        while(1) { }
+    } else {
+        puts("Not enough memory");
+        while(1) { }
+    }
 }
 
 /* configSUPPORT_STATIC_ALLOCATION is set to 1, so the application must provide an
@@ -149,7 +154,7 @@ extern "C" void vApplicationGetTimerTaskMemory( StaticTask_t **ppxTimerTaskTCBBu
 int __attribute__((used)) main( void )
 {
     pre_init( );
-    NVIC_PriorityGroupConfig(1);
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
     
 #if USE_FREERTOS
     xTaskCreate(loopTask, "loopTask", ARDUINO_LOOP_STACK_SIZE, NULL, 1, &loopTaskHandle);
