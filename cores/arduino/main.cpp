@@ -78,8 +78,8 @@ static void loopTask(void *pvParameters) {
 
 extern "C" void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
     taskDISABLE_INTERRUPTS();
-    puts("Stack overflow in task ");
-    puts(pcTaskName);
+    // puts("Stack overflow in task ");
+    // puts(pcTaskName);
     while(1) { }
 }
 
@@ -87,7 +87,7 @@ extern "C" void vApplicationMallocFailedHook(void) {
     if (xPortIsInsideInterrupt()) {
         while(1) { }
     } else {
-        puts("Not enough memory");
+        // puts("Not enough memory");
         while(1) { }
     }
 }

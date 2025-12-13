@@ -73,7 +73,8 @@ handle_reset:
     #if defined( WCH_HPE_ENABLED ) && ( WCH_HPE_ENABLED != 0 )
 
     /* Enable nested and hardware stack */
-	li t0, 0x3
+	/* li t0, 0x3 */
+	li t0, 0x1
 	csrw 0x804, t0
 
 	#else
