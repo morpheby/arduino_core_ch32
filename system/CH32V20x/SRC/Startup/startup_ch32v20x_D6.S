@@ -79,7 +79,8 @@ handle_reset:
 	#else
 
 	/* Enable nested  */
-    li t0, 0x2
+    /* li t0, 0x2 */
+	li t0, 0x0
     csrw 0x804, t0
 
 	#endif
