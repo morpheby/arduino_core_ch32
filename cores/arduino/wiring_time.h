@@ -65,66 +65,7 @@ extern void delay(uint32_t ms) ;
  * \param us the number of microseconds to pause (uint32_t)
  */
 
-#ifndef CH32V10x
-static inline void delayMicroseconds(uint32_t) __attribute__((always_inline, unused));
-static inline void delayMicroseconds(uint32_t us)
-{
-  __IO uint64_t currentTicks = SysTick->CNT;
-  /* Number of ticks per millisecond */
-  uint64_t tickPerMs = SysTick->CMP + 1;
-  /* Number of ticks to count */
-  #if USE_FREERTOS
-  uint64_t nbTicks = ((us - ((us > 0) ? 1 : 0)) * tickPerMs) / (portTICK_PERIOD_MS * 1000);
-  #else
-  uint64_t nbTicks = ((us - ((us > 0) ? 1 : 0)) * tickPerMs) / 1000;
-  #endif
-  /* Number of elapsed ticks */
-  uint64_t elapsedTicks = 0;
-  __IO uint64_t oldTicks = currentTicks;
-  do {
-    currentTicks = SysTick->CNT;
-    // elapsedTicks += (oldTicks < currentTicks) ? tickPerMs + oldTicks - currentTicks :
-    //                 oldTicks - currentTicks;
-    
-    //increment
-    elapsedTicks += (oldTicks <= currentTicks) ? currentTicks - oldTicks :
-                     tickPerMs - oldTicks + currentTicks;
-
-    oldTicks = currentTicks;
-  } while (nbTicks > elapsedTicks);  
-}
-#else
-#define SYSTICK_CNTL    (0xE000F004)   
-#define SYSTICK_CNTH    (0xE000F008)
-#define SYSTICK_CMPL    (0xE000F00C)
-#define SYSTICK_CMPH    (0xE000F010)
-
-static inline void delayMicroseconds(uint32_t) __attribute__((always_inline, unused));
-static inline void delayMicroseconds(uint32_t us)
-{
-  __IO uint64_t currentTicks = *((__IO uint32_t *)SYSTICK_CNTH);
-                currentTicks = (currentTicks << 32) +  *((__IO uint32_t *)SYSTICK_CNTL); 
-  /* Number of ticks per millisecond */
-  uint64_t tickPerMs = *((__IO uint32_t *)SYSTICK_CMPH);
-           tickPerMs = (tickPerMs << 32) + *((__IO uint32_t *)SYSTICK_CMPL) + 1;        
-  /* Number of ticks to count */
-  uint64_t nbTicks = ((us - ((us > 0) ? 1 : 0)) * tickPerMs) / 1000;
-  /* Number of elapsed ticks */
-  uint64_t elapsedTicks = 0;
-  __IO uint64_t oldTicks = currentTicks;
-  do {
-    currentTicks = *((__IO uint32_t *)SYSTICK_CNTH);
-    currentTicks = (currentTicks << 32) +  *((__IO uint32_t *)SYSTICK_CNTL); 
-    //increment
-    elapsedTicks += (oldTicks <= currentTicks) ? currentTicks - oldTicks :
-                     tickPerMs - oldTicks + currentTicks;
-
-    oldTicks = currentTicks;
-  } while (nbTicks > elapsedTicks);  
-}
-
-#endif
-
+void delayMicroseconds(uint32_t us);
 
 #ifdef __cplusplus
 }
