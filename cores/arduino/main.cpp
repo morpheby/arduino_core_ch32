@@ -57,6 +57,10 @@ static void usb_device_task(void *param) {
         yieldIfNecessary();
 #endif
         loop( );
+#if USE_BUFFERED_IO
+        fflush(stdout);
+        fflush(stderr);
+#endif
 #if USE_FREERTOS && USE_TINYUSB
         TinyUSB_Device_FlushCDC();
 #endif
@@ -72,14 +76,20 @@ static void usb_device_task(void *param) {
 }
 
 #if USE_FREERTOS
+
+#if configSUPPORT_STATIC_ALLOCATION
+static StackType_t loopTaskStack[ARDUINO_LOOP_STACK_SIZE];
+static StaticTask_t loopTaskTCB;
+#endif
+
 static void loopTask(void *pvParameters) {
     loopFn();
 }
 
 extern "C" void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
     taskDISABLE_INTERRUPTS();
-    // puts("Stack overflow in task ");
-    // puts(pcTaskName);
+    puts("Stack overflow in task ");
+    puts(pcTaskName);
     while(1) { }
 }
 
@@ -87,7 +97,7 @@ extern "C" void vApplicationMallocFailedHook(void) {
     if (xPortIsInsideInterrupt()) {
         while(1) { }
     } else {
-        // puts("Not enough memory");
+        puts("Not enough memory");
         while(1) { }
     }
 }
@@ -155,9 +165,25 @@ int __attribute__((used)) main( void )
 {
     pre_init( );
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+
+#if !USE_BUFFERED_IO
+    // Disable buffering on stdout/stderr
+    setbuf(stdout, NULL);
+    setbuf(stderr, NULL);
+#else if USE_BUFFERED_IO > 1
+    // Enable buffering on stdout/stderr
+    static char stdout_buf[USE_BUFFERED_IO];
+    static char stderr_buf[USE_BUFFERED_IO];
+    setbuf(stdout, stdout_buf);
+    setbuf(stderr, stderr_buf);
+#endif
     
 #if USE_FREERTOS
+#if configSUPPORT_STATIC_ALLOCATION
+    loopTaskHandle = xTaskCreateStatic(loopTask, "loopTask", ARDUINO_LOOP_STACK_SIZE, NULL, 1, loopTaskStack, &loopTaskTCB);
+#else
     xTaskCreate(loopTask, "loopTask", ARDUINO_LOOP_STACK_SIZE, NULL, 1, &loopTaskHandle);
+#endif
     vTaskStartScheduler();
 #else
 #if USE_TINYUSB
