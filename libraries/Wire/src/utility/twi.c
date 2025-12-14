@@ -40,6 +40,7 @@
 #include "utility/twi.h"
 #include "PinAF_ch32yyxx.h"
 #include "clock.h"
+#include "board.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -641,8 +642,7 @@ void i2c_attachSlaveTxEvent(i2c_t *obj, void (*function)(i2c_t *))
 * @param  None
 * @retval None
 */
-void I2C1_EV_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-void I2C1_EV_IRQHandler(void)
+ISR void I2C1_EV_IRQHandler(void)
 {
 #if OPT_I2C_SLAVE
    I2C_HandleTypeDef *handle = i2c_handles[I2C1_INDEX];  // MMOLE: was commented
@@ -657,8 +657,7 @@ void I2C1_EV_IRQHandler(void)
 * @param  None
 * @retval None
 */
-void I2C1_ER_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-void I2C1_ER_IRQHandler(void)
+ISR void I2C1_ER_IRQHandler(void)
 {
 #if OPT_I2C_SLAVE
    //I2C_HandleTypeDef *handle = i2c_handles[I2C1_INDEX];  // MMOLE: was commented
@@ -676,8 +675,7 @@ void I2C1_ER_IRQHandler(void)
 * @param  None
 * @retval None
 */
-void I2C2_EV_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-void I2C2_EV_IRQHandler(void)
+ISR void I2C2_EV_IRQHandler(void)
 {
 #if OPT_I2C_SLAVE
    I2C_HandleTypeDef *handle = i2c_handles[I2C2_INDEX];  // MMOLE: was commented
@@ -694,8 +692,7 @@ void I2C2_EV_IRQHandler(void)
 * @param  None
 * @retval None
 */
-void I2C2_ER_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-void I2C2_ER_IRQHandler(void)
+ISR void I2C2_ER_IRQHandler(void)
 {
 #if OPT_I2C_SLAVE
    //I2C_HandleTypeDef *handle = i2c_handles[I2C2_INDEX];  // MMOLE: was commented
