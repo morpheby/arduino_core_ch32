@@ -337,7 +337,7 @@ FLASH_Status FLASH_ProgramOptionByteData(uint32_t Address, uint8_t Data)
 {
     FLASH_Status status = FLASH_COMPLETE;
     uint32_t     Addr = 0x1FFFF800;
-    __IO uint8_t i;
+    uint8_t      i;
     uint16_t     pbuf[8];
 
     status = FLASH_WaitForLastOperation(ProgramTimeout);
