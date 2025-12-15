@@ -170,7 +170,7 @@ int __attribute__((used)) main( void )
     // Disable buffering on stdout/stderr
     setbuf(stdout, NULL);
     setbuf(stderr, NULL);
-#else if USE_BUFFERED_IO > 1
+#elif USE_BUFFERED_IO > 1
     // Enable buffering on stdout/stderr
     static char stdout_buf[USE_BUFFERED_IO];
     static char stderr_buf[USE_BUFFERED_IO];
