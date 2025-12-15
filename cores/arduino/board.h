@@ -23,13 +23,14 @@ extern "C" {
 #endif
 
 #define DFLASH __attribute__((section (".dflash")))
+#define IFLASH __attribute__((section (".iflash")))
 
 #if defined( FREERTOS_USE_ISP ) && ( FREERTOS_USE_ISP != 0 )
-#define ISR  __attribute__((externally_visible, used))
+#define ISR  __attribute__((externally_visible, used)) IFLASH
 #elif defined( WCH_HPE_ENABLED ) && ( WCH_HPE_ENABLED != 0 )
-#define ISR __attribute__((externally_visible, used, interrupt("WCH-Interrupt-fast")))
+#define ISR __attribute__((externally_visible, used, interrupt("WCH-Interrupt-fast"))) IFLASH
 #else
-#define ISR __attribute__((externally_visible, used, interrupt()))
+#define ISR __attribute__((externally_visible, used, interrupt())) IFLASH
 #endif
 
 void pre_init(void) ;
