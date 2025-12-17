@@ -57,14 +57,18 @@ void delay(uint32_t ms)
 void delayMicroseconds(uint32_t us)
 {
   uint64_t currentTicks = SysTick->CNT;
-  /* Number of ticks per millisecond */
-  const uint64_t tickPerMs = SysTick->CMP + 1;
   /* Number of ticks to count */
   #if USE_FREERTOS
-  const uint64_t nbTicks = ((us - ((us > 0) ? 1 : 0)) * tickPerMs) / (portTICK_PERIOD_MS * 1000);
+  const uint64_t tickPerMs = (((uint64_t)configCPU_CLOCK_HZ)/configTICK_RATE_HZ) / portTICK_PERIOD_MS;
+  const uint64_t nbTicks = ((((uint64_t)us) - ((us > 0) ? 1 : 0)) * tickPerMs) / 1000;
+  const uint64_t targetTicks = nbTicks + currentTicks;
+  do {
+    currentTicks = SysTick->CNT;
+  } while (targetTicks > currentTicks);
   #else
+  /* Number of ticks per millisecond */
+  const uint64_t tickPerMs = SysTick->CMP + 1;
   const uint64_t nbTicks = ((us - ((us > 0) ? 1 : 0)) * tickPerMs) / 1000;
-  #endif
   /* Number of elapsed ticks */
   uint64_t elapsedTicks = 0;
   uint64_t oldTicks = currentTicks;
@@ -79,6 +83,7 @@ void delayMicroseconds(uint32_t us)
 
     oldTicks = currentTicks;
   } while (nbTicks > elapsedTicks);  
+  #endif
 }
 #else
 #define SYSTICK_CNTL    (0xE000F004)   
