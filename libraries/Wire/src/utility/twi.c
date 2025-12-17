@@ -206,6 +206,13 @@ void i2c_custom_init(i2c_t *obj, uint32_t timing, uint32_t addressingMode, uint3
 
         /* Init the I2C */
         I2C_Init(obj->i2c, &(handle->Init));
+
+        if (obj->NoStretchMode) {
+          I2C_StretchClockCmd(obj->i2c, DISABLE);
+        } else {
+          I2C_StretchClockCmd(obj->i2c, DISABLE);
+        }
+
         I2C_Cmd(obj->i2c,ENABLE);
 
         /* Initialize default values */
@@ -315,7 +322,8 @@ i2c_status_e i2c_master_write(i2c_t *obj, uint8_t dev_address,
         if((GetTick()-tickstart) > I2C_TIMEOUT_TICK) 
         {
 // MMOLE: To allow I2C scanning, timeout on an addresses should release the bus
-          if(sendstop)  
+          I2C_ClearFlag(obj->i2c, I2C_FLAG_AF | I2C_FLAG_BERR);
+          // if(sendstop)  
             I2C_GenerateSTOP(obj->handle.Instance, ENABLE);
           return I2C_TIMEOUT;
         }
