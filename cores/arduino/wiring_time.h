@@ -49,7 +49,7 @@ extern uint32_t millis(void) ;
  *
  * \note There are 1,000 microseconds in a millisecond and 1,000,000 microseconds in a second.
  */
-extern uint32_t micros(void) ;
+extern uint64_t micros(void) ;
 
 /**
  * \brief Pauses the program for the amount of time (in milliseconds) specified as parameter.
