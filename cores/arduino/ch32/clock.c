@@ -45,22 +45,12 @@ WEAK uint64_t GetTick(void) {
 
 #if defined(CH32V20x) || defined(CH32V30x) || defined(CH32V30x_C) || defined(CH32V00x) || defined(CH32X035) || defined(CH32L10x) || defined(CH32VM00X)
 
-uint32_t getCurrentMicros(void)
+uint64_t getCurrentMicros(void)
 {
-  portENTER_CRITICAL();
-
-  uint64_t tms = SysTick->CMP;
-  uint64_t m0 = xTaskGetTickCount();
-  uint64_t u0 = SysTick->CNT;
-
-  // If interrupt is pending, assume tick+1
-  if ((SysTick->SR & 1) != 0) {
-    m0 += 1;
-  }
-
-  portEXIT_CRITICAL();
-
-  return (m0 * 1000 * portTICK_RATE_MS + ((tms - u0) / (configCPU_CLOCK_HZ / 1000000)));
+  // SysTick shows real CPU ticks without resetting at each RTOS tick
+  uint64_t systicks = SysTick->CNT;
+  systicks /= (SystemCoreClock / 1000000ULL); // Convert to microseconds
+  return systicks;
 }
 
 #endif

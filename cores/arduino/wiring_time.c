@@ -33,7 +33,7 @@ uint32_t millis(void)
 }
 
 // Interrupt-compatible version of micros
-uint32_t micros(void)
+uint64_t micros(void)
 {
   return getCurrentMicros();
 }
@@ -59,8 +59,8 @@ void delayMicroseconds(uint32_t us)
   uint64_t currentTicks = SysTick->CNT;
   /* Number of ticks to count */
   #if USE_FREERTOS
-  const uint64_t tickPerMs = (((uint64_t)configCPU_CLOCK_HZ)/configTICK_RATE_HZ) / portTICK_PERIOD_MS;
-  const uint64_t nbTicks = ((((uint64_t)us) - ((us > 0) ? 1 : 0)) * tickPerMs) / 1000;
+  const uint64_t tickPerMs = ((uint64_t)configCPU_CLOCK_HZ)/1000ULL;
+  const uint64_t nbTicks = ((((uint64_t)us) - ((us > 0) ? 1 : 0)) * tickPerMs) / 1000ULL;
   const uint64_t targetTicks = nbTicks + currentTicks;
   do {
     currentTicks = SysTick->CNT;
