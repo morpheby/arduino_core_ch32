@@ -28,7 +28,7 @@ extern "C" {
 /* Exported functions ------------------------------------------------------- */
 WEAK uint64_t GetTick(void);
 uint32_t getCurrentMillis(void);
-uint32_t getCurrentMicros(void);
+uint64_t getCurrentMicros(void);
 
 // void configIPClock(void);
 // void enableClock(sourceClock_t source);
