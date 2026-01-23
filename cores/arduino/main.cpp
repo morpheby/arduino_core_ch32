@@ -3,6 +3,11 @@
 #include "Arduino.h"
 #include "debug.h"
 
+#if !defined(NO_YIELD)
+#define NO_YIELD 0
+#endif // NO_YIELD
+
+
 #if USE_FREERTOS
 #include "FreeRTOS.h"
 #include "task.h"
@@ -18,7 +23,7 @@
 void yieldIfNecessary(void) {
   static uint64_t lastYield = 0;
   uint64_t now = millis();
-  if ((now - lastYield) > 2000) {
+  if ((now - lastYield) > 100) {
     lastYield = now;
     vTaskDelay(5);
   }
@@ -53,7 +58,7 @@ static void usb_device_task(void *param) {
 #endif
     setup();
     for (;;) {
-#if USE_FREERTOS
+#if USE_FREERTOS && !(NO_YIELD)
         yieldIfNecessary();
 #endif
         loop( );
