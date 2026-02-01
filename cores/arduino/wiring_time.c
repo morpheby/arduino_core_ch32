@@ -54,7 +54,7 @@ void delay(uint32_t ms)
 }
 
 #ifndef CH32V10x
-void delayMicroseconds(uint32_t us)
+void IFLASH delayMicroseconds(uint32_t us)
 {
   uint64_t currentTicks = SysTick->CNT;
   /* Number of ticks to count */
