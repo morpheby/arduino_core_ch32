@@ -18,6 +18,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "ch32_def.h"
 #include "ch32yyxx_rtc.h"
+#include "ch32yyxx_rcc.h"
+#include "ch32yyxx_bkp.h"
 
 #ifdef __cplusplus
 extern "C" {

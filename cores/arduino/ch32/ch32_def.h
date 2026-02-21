@@ -1,45 +1,16 @@
 #ifndef _CH32_DEF_
 #define _CH32_DEF_
 
+#include "ch32vxxx.h"
 
-/**
- * @brief CH32V core version number
- */
-#define CH32_CORE_VERSION_MAJOR    (0x01U) /*!< [31:24] major version */
-#define CH32_CORE_VERSION_MINOR    (0x00U) /*!< [23:16] minor version */
-#define CH32_CORE_VERSION_PATCH    (0x00U) /*!< [15:8]  patch version */
-/*
- * Extra label for development:
- * 0: official release
- * [1-9]: release candidate
- * F[0-9]: development
- */
-#define CH32_CORE_VERSION_EXTRA    (0x00U) /*!< [7:0]  extra version */
-#define CH32_CORE_VERSION          ((CH32_CORE_VERSION_MAJOR << 24U)\
-                                        |(CH32_CORE_VERSION_MINOR << 16U)\
-                                        |(CH32_CORE_VERSION_PATCH << 8U )\
-                                        |(CH32_CORE_VERSION_EXTRA))
-
-
-/*
- *All defined 
- */
-#if defined(CH32V20x) || defined(CH32V203xB) || defined(CH32V208)
-  #include "ch32v20x.h"
-#elif defined(CH32V30x) || defined(CH32V30x_C)
-  #include "ch32v30x.h"
-#elif defined(CH32V10x)
-  #include "ch32v10x.h"
-#elif defined(CH32V00x)
-  #include "ch32v00x.h" 
-#elif defined(CH32X035)
-#include "ch32x035.h" 
-#elif defined(CH32L10x)
-#include "ch32l103.h"
-#elif defined(CH32VM00X)
-#include "ch32v00X.h"
-#else 
-  #error "CH32YYXX chip series is not defined in boards.txt."
+#ifdef CH32_MCU_FAMILY_CH32V20x
+  #define CH32V20x
+#elif CH32_MCU_FAMILY_CH32V205
+  #define CH32V205
+#elif CH32_MCU_FAMILY_CH32V30x
+  #define CH32V30x
+#else
+  #error "Unsupported CH32_MCU_FAMILY: " CH32_MCU_FAMILY
 #endif
 
 #ifndef F_CPU

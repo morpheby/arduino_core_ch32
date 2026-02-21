@@ -2,6 +2,7 @@
 #include "hw_config.h"
 #include "clock.h"
 #include "core_riscv_ch32yyxx.h"
+#include "ch32_clock.h"
 
 #ifdef __cplusplus
 extern "C" {

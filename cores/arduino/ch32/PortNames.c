@@ -29,6 +29,8 @@
  Modified 1 may 2023 by TempersLee
  */
 #include "PortNames.h"
+#include "ch32yyxx_rcc.h"
+#include "ch32yyxx_gpio.h"
 
 GPIO_TypeDef *GPIOPort[MAX_NB_PORT] = {
     GPIOA

@@ -42,6 +42,7 @@
 #include "ch32_def.h"
 #include "PinNames.h"
 #include "variant.h"
+#include "ch32yyxx_usart.h"
 
 #ifdef __cplusplus
 extern "C" {

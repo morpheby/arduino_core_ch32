@@ -43,6 +43,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "ch32_def.h"
+#include "ch32yyxx_i2c.h"
 #include "PeripheralPins.h"
 
 

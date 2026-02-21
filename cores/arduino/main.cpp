@@ -2,6 +2,8 @@
 
 #include "Arduino.h"
 #include "debug.h"
+#include "ch32vxxx.h"
+#include "ch32yyxx_misc.h"
 
 #if !defined(NO_YIELD)
 #define NO_YIELD 0

@@ -3,6 +3,7 @@
 
 #include "PinNamesTypes.h"
 #include "PortNames.h"
+#include "ch32yyxx_adc.h"
 
 #ifdef __cplusplus
 extern "C" {

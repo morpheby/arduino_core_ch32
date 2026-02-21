@@ -43,6 +43,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "ch32_def.h"
 #include "PeripheralPins.h"
+#include "ch32yyxx_spi.h"
+#include "ch32_clock.h"
 
 #ifdef __cplusplus
 extern "C" {

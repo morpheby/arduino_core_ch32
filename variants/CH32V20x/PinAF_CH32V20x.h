@@ -32,6 +32,9 @@
 #ifndef _PINAF_CH32V20X_H
 #define _PINAF_CH32V20X_H
 
+#include "ch32yyxx_gpio.h"
+#include "ch32yyxx_rcc.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -273,13 +276,16 @@ static inline void pin_SetV32AFPin(uint32_t afnum)
       break;
     case AFIO_Remap_ETH_DISABLE: 
       GPIO_PinRemapConfig(GPIO_Remap_ETH,DISABLE);
-      break;      
+      break;
+      // TODO: Figure this out
+      /*
     case AFIO_Remap_CAN2_ENABLE: 
       GPIO_PinRemapConfig(GPIO_Remap_CAN2,ENABLE);
       break;
     case AFIO_Remap_CAN2_DISABLE: 
       GPIO_PinRemapConfig(GPIO_Remap_CAN2,DISABLE);
       break;
+      */
 
     case AFIO_Remap_ETH_RMII:     
       GPIO_PinRemapConfig(GPIO_Remap_MII_RMII_SEL,ENABLE);  //0 is MII,1 is RMII
@@ -314,22 +320,28 @@ static inline void pin_SetV32AFPin(uint32_t afnum)
       GPIO_PinRemapConfig(GPIO_Remap_ADC2_ETRGREG,DISABLE);
       break;
 
+      // TODO: Figure this out
+      /*
     case AFIO_Remap_SWJ_NONJTRST: 
       GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST,ENABLE);
       break;
     case AFIO_Remap_SWJ_NOJTAG: 
       GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable,ENABLE);
       break;
+      */
     case AFIO_Remap_SWJ_DISABLE: 
       GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable,ENABLE);
       break;
 
+      // TODO: Figure this out
+      /*
     case AFIO_Remap_SPI3_ENABLE:
       GPIO_PinRemapConfig(GPIO_Remap_SPI3,ENABLE);
       break;
     case AFIO_Remap_SPI3_DISABLE:
       GPIO_PinRemapConfig(GPIO_Remap_SPI3,DISABLE);
       break;
+      */
 
     case AFIO_Remap_TIM2ITR1_TO_ETH:
       GPIO_PinRemapConfig(GPIO_Remap_TIM2ITR1_PTP_SOF,DISABLE);   //0 is to pps of eth, 1 is to sof of USB, (only for Connectivity line devices)
@@ -343,7 +355,9 @@ static inline void pin_SetV32AFPin(uint32_t afnum)
     case AFIO_Remap_PTP_PPS_DISABLE:
       GPIO_PinRemapConfig(GPIO_Remap_PTP_PPS,DISABLE);          //(only for Connectivity line devices)
       break;
-
+      
+      // TODO: Figure this out
+      /*
     case AFIO_Remap_TIM8_ENABLE:
       GPIO_PinRemapConfig(GPIO_Remap_TIM8,ENABLE);
       break;
@@ -371,6 +385,8 @@ static inline void pin_SetV32AFPin(uint32_t afnum)
       GPIO_PinRemapConfig(GPIO_FullRemap_TIM10,DISABLE);
       break;
 
+      */
+
     case AFIO_Remap_FSMCNADV_ENABLE:
       GPIO_PinRemapConfig(GPIO_Remap_FSMC_NADV,ENABLE); 
       break;
@@ -388,6 +404,8 @@ static inline void pin_SetV32AFPin(uint32_t afnum)
       GPIO_PinRemapConfig(GPIO_FullRemap_USART4,DISABLE);
       break;  
 
+      // TODO: Figure this out
+       /*
     case AFIO_FullRemap_USART5_ENABLE:
       GPIO_PinRemapConfig(GPIO_FullRemap_USART5,ENABLE);
       break;
@@ -427,6 +445,7 @@ static inline void pin_SetV32AFPin(uint32_t afnum)
     case AFIO_Remap_USART8_DISABLE:
       GPIO_PinRemapConfig(GPIO_FullRemap_USART8,DISABLE);
       break;
+      */
 
     case AFIO_Remap_USART1_HighBit_ENABLE:
       GPIO_PinRemapConfig(GPIO_Remap_USART1_HighBit,ENABLE);

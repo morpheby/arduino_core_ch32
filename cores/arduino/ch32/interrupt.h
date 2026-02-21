@@ -42,6 +42,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "ch32_def.h"
+#include "ch32yyxx_gpio.h"
+#include "ch32yyxx_exti.h"
 #include "Arduino.h"
 
 #if !defined(EXTI_MODULE_DISABLED)
