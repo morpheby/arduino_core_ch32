@@ -70,7 +70,6 @@
 
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
-#include "debug.h"
 
 /*-----------------------------------------------------------
  * Application specific definitions.
@@ -87,6 +86,7 @@
 /* See https://www.freertos.org/Using-FreeRTOS-on-RISC-V.html */
 
 #include "ch32vxxx.h"
+#include <stdio.h>
 
 /* don't have MTIME */
 #define configMTIME_BASE_ADDRESS     ( 0 )
@@ -141,7 +141,7 @@
 #define configTIMER_QUEUE_LENGTH        4
 #define configTIMER_TASK_STACK_DEPTH    ( configMINIMAL_STACK_SIZE )
 
-
+#define configUSE_PICOLIBC_TLS             1
 
 /* Set the following definitions to 1 to include the API function, or zero
 to exclude the API function. */
