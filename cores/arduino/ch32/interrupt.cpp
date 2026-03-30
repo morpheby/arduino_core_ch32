@@ -1,5 +1,6 @@
 
 #include "interrupt.h"
+#include "ch32vxxx/ch32vxxx_isr.h"
 #include "ch32yyxx_exti.h"
 
 #if !defined(EXTI_MODULE_DISABLED)
@@ -221,12 +222,7 @@ void _gpio_exti_callback(uint16_t GPIO_Pin)
 
 #if defined(CH32V00x) || defined(CH32VM00X)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void EXTI7_0_IRQHandler(void) ISR;
-void EXTI7_0_IRQHandler(void)
+_ISR_DEF(EXTI7_0_IRQHandler)
 {
    uint32_t pin;
    for (pin = GPIO_Pin_0; pin <= GPIO_Pin_7; pin = pin << 1) 
@@ -238,23 +234,10 @@ void EXTI7_0_IRQHandler(void)
       }
    }
 }
-#ifdef __cplusplus
-}
-#endif
-
 
 #elif defined(CH32X035)
 
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void EXTI7_0_IRQHandler(void) ISR;
-void EXTI15_8_IRQHandler(void) ISR
-void EXTI25_16_IRQHandler(void) ISR;
-
-void EXTI7_0_IRQHandler(void)
+_ISR_DEF(EXTI7_0_IRQHandler)
 {
    uint32_t pin;
    for (pin = GPIO_Pin_0; pin <= GPIO_Pin_7; pin = pin << 1) 
@@ -267,7 +250,7 @@ void EXTI7_0_IRQHandler(void)
    }
 }
 
-void EXTI15_8_IRQHandler(void)
+_ISR_DEF(EXTI15_8_IRQHandler)
 {
    uint32_t pin;
    for (pin = GPIO_Pin_8; pin <= GPIO_Pin_15; pin = pin << 1) 
@@ -280,7 +263,7 @@ void EXTI15_8_IRQHandler(void)
    }
 }
 
-void EXTI25_16_IRQHandler(void)
+_ISR_DEF(EXTI25_16_IRQHandler)
 {
    uint32_t pin;
    for (pin = GPIO_Pin_16; pin <= GPIO_Pin_23; pin = pin << 1) 
@@ -293,31 +276,14 @@ void EXTI25_16_IRQHandler(void)
    }
 }
 
-
-#ifdef __cplusplus
-}
-#endif
-
-
 #else
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void EXTI0_IRQHandler(void) ISR;
-void EXTI1_IRQHandler(void) ISR;
-void EXTI2_IRQHandler(void) ISR;
-void EXTI3_IRQHandler(void) ISR;
-void EXTI4_IRQHandler(void) ISR;
-void EXTI9_5_IRQHandler(void) ISR;
-void EXTI15_10_IRQHandler(void) ISR;
 /**
   * @brief This function handles external line 0 interrupt request.
   * @param  None
   * @retval None
   */
-void EXTI0_IRQHandler(void)
+_ISR_DEF(EXTI0_IRQHandler)
 {
   EXTI_ClearITPendingBit(EXTI_Line0); 
   _gpio_exti_callback(EXTI_Line0);
@@ -328,7 +294,7 @@ void EXTI0_IRQHandler(void)
   * @param  None
   * @retval None
   */
-void EXTI1_IRQHandler(void)
+_ISR_DEF(EXTI1_IRQHandler)
 {
    EXTI_ClearITPendingBit(EXTI_Line1); 
   _gpio_exti_callback(EXTI_Line1);
@@ -339,7 +305,7 @@ void EXTI1_IRQHandler(void)
   * @param  None
   * @retval None
   */
-void EXTI2_IRQHandler(void)
+_ISR_DEF(EXTI2_IRQHandler)
 {
   EXTI_ClearITPendingBit(EXTI_Line2); 
   _gpio_exti_callback(EXTI_Line2);
@@ -350,7 +316,7 @@ void EXTI2_IRQHandler(void)
   * @param  None
   * @retval None
   */
-void EXTI3_IRQHandler(void)
+_ISR_DEF(EXTI3_IRQHandler)
 {
   EXTI_ClearITPendingBit(EXTI_Line3); 
   _gpio_exti_callback(EXTI_Line3);
@@ -361,7 +327,7 @@ void EXTI3_IRQHandler(void)
   * @param  None
   * @retval None
   */
-void EXTI4_IRQHandler(void)
+_ISR_DEF(EXTI4_IRQHandler)
 {
    EXTI_ClearITPendingBit(EXTI_Line4); 
    _gpio_exti_callback(EXTI_Line4);
@@ -373,7 +339,7 @@ void EXTI4_IRQHandler(void)
   * @param  None
   * @retval None
   */
-void EXTI9_5_IRQHandler(void)
+_ISR_DEF(EXTI9_5_IRQHandler)
 {
   uint32_t pin;
   for (pin = GPIO_Pin_5; pin <= GPIO_Pin_9; pin = pin << 1) {
@@ -390,7 +356,7 @@ void EXTI9_5_IRQHandler(void)
   * @param  None
   * @retval None
   */
-void EXTI15_10_IRQHandler(void)
+_ISR_DEF(EXTI15_10_IRQHandler)
 {
   uint32_t pin;
   for (pin = GPIO_Pin_10; pin <= GPIO_Pin_15; pin = pin << 1) {
@@ -401,10 +367,6 @@ void EXTI15_10_IRQHandler(void)
       }
   }
 }
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif  /* CH32V00x */
 

@@ -15,6 +15,7 @@
 #include "ch32yyxx_adc.h"
 #include "ch32yyxx_dac.h"
 #include "PinAF_ch32yyxx.h"
+#include "core_config.h"
 
 #if USE_FREERTOS
 
@@ -23,15 +24,21 @@
 
 #endif
 
+#ifdef ADC_MODULE_OPTIONAL
+#define _ADC_ISR _ISR
+#else
+#define _ADC_ISR
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #if USE_FREERTOS
-static volatile bool conversionDone = false;
-static volatile TaskHandle_t adcWaitingTaskHandle;
+static bool conversionDone = false;
+static TaskHandle_t adcWaitingTaskHandle;
 
-ISR void ADC1_2_IRQHandler(void) {
+_ADC_ISR void ADC1_2_IRQHandler(void) {
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
   if (adcWaitingTaskHandle) {
     vTaskNotifyGiveFromISR(adcWaitingTaskHandle, &xHigherPriorityTaskWoken);

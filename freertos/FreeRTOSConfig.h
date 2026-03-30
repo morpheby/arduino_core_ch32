@@ -85,7 +85,7 @@
 
 /* See https://www.freertos.org/Using-FreeRTOS-on-RISC-V.html */
 
-#include "ch32vxxx.h"
+#include "ch32vxxx/ch32vxxx.h"
 #include <stdio.h>
 
 /* don't have MTIME */

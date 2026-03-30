@@ -1,7 +1,7 @@
 #ifndef _CH32_DEF_
 #define _CH32_DEF_
 
-#include "ch32vxxx.h"
+#include "ch32vxxx/ch32vxxx.h"
 
 #ifdef CH32_MCU_FAMILY_CH32V20x
   #define CH32V20x

@@ -3,6 +3,7 @@
 #include "clock.h"
 #include "core_riscv_ch32yyxx.h"
 #include "ch32_clock.h"
+#include <ch32_core_interrupts.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,6 +50,7 @@ void hw_config_init(void)
 #if !(USE_FREERTOS)
   systick_init();
 #endif
+  ch32_interrupts_init();
 }
 #ifdef __cplusplus
 }
