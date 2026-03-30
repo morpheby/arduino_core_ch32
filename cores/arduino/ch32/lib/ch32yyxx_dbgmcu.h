@@ -1,5 +1,5 @@
 #ifndef _CH32YYXX_DBGMCU_H_
-#define _CH32YYXX_DBGMCU_H
+#define _CH32YYXX_DBGMCU_H_
 
 #ifdef CH32V00x
 #include "ch32v00x_dbgmcu.h"

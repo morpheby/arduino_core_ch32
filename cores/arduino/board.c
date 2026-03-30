@@ -1,5 +1,5 @@
 #include "board.h"
-#include "ch32v20x_flash.h"
+#include "ch32yyxx_flash.h"
 
 #ifdef __cplusplus
 extern "C" {

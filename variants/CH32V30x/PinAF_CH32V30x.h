@@ -32,6 +32,9 @@
 #ifndef _PINAF_CH32V30X_H
 #define _PINAF_CH32V30X_H
 
+#include "ch32yyxx_gpio.h"
+#include "ch32yyxx_rcc.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

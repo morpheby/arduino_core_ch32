@@ -19,6 +19,7 @@
 #include "ch32_def.h"
 #include "PinNames.h"
 #include "variant.h"
+#include "ch32yyxx_tim.h"
 
 
 #ifdef __cplusplus
@@ -92,7 +93,7 @@ typedef struct
 {
   TIM_TypeDef                          *Instance;         
   TIM_TimeBaseInitTypeDef               Init;     
-  TIM_ActiveChannel                     Channel;   //ÊÇ·ñÐèÒª£¿
+  TIM_ActiveChannel                     Channel;   //ï¿½Ç·ï¿½ï¿½ï¿½Òªï¿½ï¿½
   /*    //Not yet considered          
   TIM_OCInitTypeDef                     OC_Init;
   TIM_ICInitTypeDef                     IC_Init;

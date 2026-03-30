@@ -13,6 +13,7 @@
 #include "analog.h"
 #include "board.h"
 #include "ch32yyxx_adc.h"
+#include "ch32yyxx_dac.h"
 #include "PinAF_ch32yyxx.h"
 
 #if USE_FREERTOS
@@ -836,7 +837,7 @@ void perform_adc_calibration(ADC_TypeDef *padc) {
         }
     }
 
-#if defined (CH32V20x_D8) || defined (CH32V20x_D8W)
+#if !defined (CH32V20x_D6)
     t = 0;
     for( i = 0; i < 6; i++ ) {
         t += buf[i + 2];
