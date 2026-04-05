@@ -1,9 +1,11 @@
 
 #include "ch32_core_interrupts.h"
+#include "ch32v30x_isr.h"
 #include <ch32vxxx/ch32vxxx_isr.h>
 #include <stdint.h>
 #include <assert.h>
 
+#if CH32_GLOBAL_ISR
 _ISR_DEF(freertos_risc_v_application_exception_handler) {
     uint32_t mcause, mepc, mstatus;
     __asm__ volatile ("csrr %0, mcause" : "=r"(mcause));
@@ -23,3 +25,4 @@ _ISR_DEF(freertos_risc_v_application_interrupt_handler) {
     assert((mcause & 0x7FFFFFFF) < CH32_IRQ_TABLE_SIZE);
     __MCU_Interrupts[mcause & 0x7FFFFFFF]();
 }
+#endif
