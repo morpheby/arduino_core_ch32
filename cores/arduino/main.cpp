@@ -172,7 +172,7 @@ extern "C" void vApplicationGetTimerTaskMemory( StaticTask_t **ppxTimerTaskTCBBu
  */
 int __attribute__((used)) main( void )
 {
-    pre_init( );
+    pre_init();
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
 
 #if !USE_BUFFERED_IO

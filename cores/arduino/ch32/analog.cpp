@@ -12,6 +12,8 @@
  */
 #include "analog.h"
 #include "board.h"
+#include "ch32_isr.h"
+#include "ch32v30x_isr.h"
 #include "ch32yyxx_adc.h"
 #include "ch32yyxx_dac.h"
 #include "PinAF_ch32yyxx.h"
@@ -25,9 +27,9 @@
 #endif
 
 #ifdef ADC_MODULE_OPTIONAL
-#define _ADC_ISR _ISR
+#define _ADC_ISR(x) _REMAP_ISR(x)
 #else
-#define _ADC_ISR
+#define _ADC_ISR(x) _ISR_DEF(x)
 #endif
 
 #ifdef __cplusplus
@@ -38,7 +40,7 @@ extern "C" {
 static bool conversionDone = false;
 static TaskHandle_t adcWaitingTaskHandle;
 
-_ADC_ISR void ADC1_2_IRQHandler(void) {
+_ADC_ISR(ADC1_2_IRQHandler) {
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
   if (adcWaitingTaskHandle) {
     vTaskNotifyGiveFromISR(adcWaitingTaskHandle, &xHigherPriorityTaskWoken);
@@ -639,6 +641,9 @@ void ADC_Clock_EN(ADC_TypeDef *padc)
 void ADC_Stop(ADC_TypeDef *padc)
 {
     ADC_Cmd(padc,DISABLE); 
+    #ifdef ADC_MODULE_OPTIONAL
+    ISR_Set_ADC1_2_IRQHandler(NULL);
+    #endif
 }
 
 /**
@@ -701,6 +706,10 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution, uint8_t gain)
   ADC_TempSensorVrefintCmd((pin & PADC_BASE) && (pin < ANA_START) ? ENABLE : DISABLE);
   padc->STATR = 0;
   
+#ifdef ADC_MODULE_OPTIONAL
+  ISR_Set_ADC1_2_IRQHandler(ADC1_2_IRQHandler);
+#endif
+
 #if USE_FREERTOS
   ADC_ITConfig(padc, ADC_IT_EOC, ENABLE);
 #endif
@@ -730,13 +739,14 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution, uint8_t gain)
   ADC_ClearFlag(padc, ADC_FLAG_EOC | ADC_FLAG_STRT | ADC_FLAG_AWD);
 
   ADC_TempSensorVrefintCmd(DISABLE);
-  ADC_Stop(padc);
-  ADC_DeInit(padc);
   
 #if USE_FREERTOS
-  adcWaitingTaskHandle = nullptr;
   ADC_ITConfig(padc, ADC_IT_EOC, DISABLE);
+  adcWaitingTaskHandle = nullptr;
 #endif
+
+  ADC_Stop(padc);
+  ADC_DeInit(padc);
 
 #if defined(ADC_CTLR_ADCAL)
     uint16_t calibration_value = 0;
@@ -795,6 +805,11 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution, uint8_t gain)
 void perform_adc_calibration(ADC_TypeDef *padc) {
   ADC_Clock_EN(padc);  
   ADC_Cmd(padc,ENABLE);
+  
+#ifdef ADC_MODULE_OPTIONAL
+  ISR_Set_ADC1_2_IRQHandler(ADC1_2_IRQHandler);
+#endif
+
 #if USE_FREERTOS
   ADC_ITConfig(padc, ADC_IT_EOC, ENABLE);
 #endif
@@ -829,9 +844,12 @@ void perform_adc_calibration(ADC_TypeDef *padc) {
 	ADC_BufferCmd(padc, ENABLE);   //enable buffer
 
 #if USE_FREERTOS
-  adcWaitingTaskHandle = nullptr;
   ADC_ITConfig(padc, ADC_IT_EOC, DISABLE);
+  adcWaitingTaskHandle = nullptr;
 #endif
+
+  ADC_Stop(padc);
+  ADC_DeInit(padc);
 
     for(i = 0; i < 10; i++){
         for(j = 0; j < 9; j++){
