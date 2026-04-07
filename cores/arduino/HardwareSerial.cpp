@@ -137,7 +137,7 @@ void HardwareSerial::begin(unsigned long baud, byte config)
       Error_Handler();
       break;
   }
-  uart_init(&_serial, (uint32_t)baud, databits, parity, stopbits);
+  // uart_init(&_serial, (uint32_t)baud, databits, parity, stopbits);
 }
 
 void HardwareSerial::end()
