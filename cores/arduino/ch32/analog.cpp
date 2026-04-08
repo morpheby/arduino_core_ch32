@@ -18,6 +18,8 @@
 #include "ch32yyxx_dac.h"
 #include "PinAF_ch32yyxx.h"
 #include "core_config.h"
+#include <cassert>
+#include <numeric>
 
 #if USE_FREERTOS
 
@@ -27,7 +29,7 @@
 #endif
 
 #ifdef ADC_MODULE_OPTIONAL
-#define _ADC_ISR(x) _REMAP_ISR(x)
+#define _ADC_ISR(x) _REMAP_ISR(x, ArduinoADC_ISR)
 #else
 #define _ADC_ISR(x) _ISR_DEF(x)
 #endif
@@ -661,7 +663,6 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution, uint8_t gain)
   uint16_t uhADCxConvertedValue = 0;
   uint32_t samplingTime = ADC_SAMPLINGTIME;
   uint32_t channel = 0;
-  uint32_t bank = 0;
 
   if ((pin & PADC_BASE) && (pin < ANA_START))  //internal channle 
   {
@@ -707,7 +708,7 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution, uint8_t gain)
   padc->STATR = 0;
   
 #ifdef ADC_MODULE_OPTIONAL
-  ISR_Set_ADC1_2_IRQHandler(ADC1_2_IRQHandler);
+  ISR_Set_ADC1_2_IRQHandler(_REMAP_ISR_NAME(ADC1_2_IRQHandler, ArduinoADC_ISR));
 #endif
 
 #if USE_FREERTOS
@@ -749,53 +750,15 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution, uint8_t gain)
   ADC_DeInit(padc);
 
 #if defined(ADC_CTLR_ADCAL)
-    uint16_t calibration_value = 0;
-    if (padc == ADC1)
-      calibration_value = calibration_value_adc1;
-    else if (padc == ADC2)
-      calibration_value = calibration_value_adc2;
-  #if (ADC_RESOLUTION == 8)
-    if(( calibration_value + uhADCxConvertedValue ) >= 255 )
-    {
-      return 255;
-    }
-    else if( ( calibration_value + uhADCxConvertedValue ) >= INT16_MAX )
-    {
-      return 0;
-    }
-    else
-    {       
-      return (uhADCxConvertedValue+calibration_value);
-    }
-  #endif
-    #if (ADC_RESOLUTION == 10)
-    if(( calibration_value + uhADCxConvertedValue ) >= 1023 )
-    {
-      return 1023;
-    }
-    else if( ( calibration_value + uhADCxConvertedValue ) >= INT16_MAX )
-    {
-      return 0;
-    }
-    else
-    {       
-      return (uhADCxConvertedValue+calibration_value);
-    }
-  #endif  
-  #if (ADC_RESOLUTION == 12)
-    if(( calibration_value + uhADCxConvertedValue ) >= 4095 )
-    {
-      return 4095;
-    }
-    else if( ( calibration_value + uhADCxConvertedValue ) >= INT16_MAX )
-    {
-      return 0;
-    }
-    else       
-    {
-      return (uhADCxConvertedValue+calibration_value);
-    }
-  #endif
+  uint16_t calibration_value = 0;
+  if (padc == ADC1)
+    calibration_value = calibration_value_adc1;
+  else if (padc == ADC2)
+    calibration_value = calibration_value_adc2;
+
+  // Calibration code is modulo-65536. For this reason, no additional checks needed,
+  // just add the value.
+  return uhADCxConvertedValue + calibration_value;
 #else
   return uhADCxConvertedValue;
 #endif
@@ -803,11 +766,17 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution, uint8_t gain)
 
 #if defined(ADC_CTLR_ADCAL)
 void perform_adc_calibration(ADC_TypeDef *padc) {
+  // Original code was something complicated and unstable. Instead we do it in a simpler way
+  // here:
+  // Calibration Code is technically just an offset value of (2^(res-1) + offset).
+  // We take multiple measurements, sort, drop first 2 and last 2, and average 6 in the middle.
+  // After that we calculate a 16-bit offset value that we will add to ADC measurements.
+
   ADC_Clock_EN(padc);  
   ADC_Cmd(padc,ENABLE);
   
 #ifdef ADC_MODULE_OPTIONAL
-  ISR_Set_ADC1_2_IRQHandler(ADC1_2_IRQHandler);
+  ISR_Set_ADC1_2_IRQHandler(_REMAP_ISR_NAME(ADC1_2_IRQHandler, ArduinoADC_ISR));
 #endif
 
 #if USE_FREERTOS
@@ -822,24 +791,18 @@ void perform_adc_calibration(ADC_TypeDef *padc) {
   adcWaitingTaskHandle = xTaskGetCurrentTaskHandle();
 #endif
 
+  std::array<uint16_t, 10> buf;
 
-  __IO uint8_t  i, j;
-  uint16_t      buf[10];
-  __IO uint16_t t;
-#if defined (CH32V20x_D6)
-  __IO uint16_t p;
-#endif
-
-  for(i = 0; i < 10; i++){
-      ADC_ResetCalibration(padc);
-      while(ADC_GetResetCalibrationStatus(padc));
-      ADC_StartCalibration(padc);
-      while(ADC_GetCalibrationStatus(padc)) {
+  for (auto &c : buf) {
+    ADC_ResetCalibration(padc);
+    while(ADC_GetResetCalibrationStatus(padc));
+    ADC_StartCalibration(padc);
+    while(ADC_GetCalibrationStatus(padc)) {
 #if USE_FREERTOS
-        ulTaskNotifyTake(1, pdMS_TO_TICKS(10));
+      ulTaskNotifyTake(1, pdMS_TO_TICKS(10));
 #endif
-      }
-      buf[i] = padc->RDATAR;
+    }
+    c = padc->RDATAR;
   }
 	ADC_BufferCmd(padc, ENABLE);   //enable buffer
 
@@ -851,53 +814,15 @@ void perform_adc_calibration(ADC_TypeDef *padc) {
   ADC_Stop(padc);
   ADC_DeInit(padc);
 
-    for(i = 0; i < 10; i++){
-        for(j = 0; j < 9; j++){
-            if(buf[j] > buf[j + 1])
-            {
-                t = buf[j];
-                buf[j] = buf[j + 1];
-                buf[j + 1] = t;
-            }
-        }
-    }
+  std::sort(buf.begin(), buf.end());
+  
+  uint32_t sum = std::accumulate(buf.begin() + 2, buf.end() - 2, 0ull);
 
-#if !defined (CH32V20x_D6)
-    t = 0;
-    for( i = 0; i < 6; i++ ) {
-        t += buf[i + 2];
-    }
+  // Check ADC calibration value is in the of expected range
+  assert(sum > 1536 * 6 && sum < 2560 * 6);
 
-    t = ( t / 6 ) + ( ( t % 6 ) / 3 );
+  uint16_t calibration_value = (uint16_t) ( (1 << (ADC_RESOLUTION - 1)) - (sum / 6) );
 
-    int calibration_value = ( int16_t )( 2048 - ( int16_t )t );
-#else
-    t = 0;
-    p = 0;
-    /* 1024 */
-    for(i = 0; i < 6; i++ ){
-            if(buf[i+2] > 1536) break;
-            t += buf[i+2];
-    }
-
-    if(i > 0){
-            t = ( t / i ) + ( (( t % i )*2) / i );
-    }
-    else t = 1024;
-
-    /* 2048 */
-    j = 6-i;
-    if(j > 0){
-        for(; i < 6; i++ ){
-                p += buf[i+2];
-        }
-
-        p = ( p / j ) + ( (( p % j )*2) / j );
-    }
-    else p = 2048;
-
-    int calibration_value = ( int16_t )(((( int16_t )( 1024 - ( int16_t )t ) + ( int16_t )( 2048 - ( int16_t )p ))/2) + ((( int16_t )( 1024 - ( int16_t )t ) + ( int16_t )( 2048 - ( int16_t )p ))%2));
-#endif
     if (padc == ADC1) {
       calibration_value_adc1 = calibration_value;
     } else if (padc == ADC2) {
