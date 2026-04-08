@@ -814,7 +814,13 @@ void perform_adc_calibration(ADC_TypeDef *padc) {
   ADC_Stop(padc);
   ADC_DeInit(padc);
 
-  std::sort(buf.begin(), buf.end());
+  for (auto it1 = buf.begin(); it1 != buf.end(); ++it1) {
+    for (auto it2 = it1 + 1; it2 != buf.end(); ++it2) {
+      if (*it2 < *it1) {
+        std::swap(*it1, *it2);
+      }
+    }
+  }
   
   uint32_t sum = std::accumulate(buf.begin() + 2, buf.end() - 2, 0ull);
 
