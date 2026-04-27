@@ -49,8 +49,8 @@ static void usb_device_task(void *param) {
 
 #endif
 
-
-[[noreturn]] static void loopFn() {
+[[gnu::cold, gnu::noinline]]
+static void initFn() {
 #if USE_FREERTOS && USE_TINYUSB
     // Create a task for tinyusb device stack
     if (xTaskCreate(usb_device_task, "usbd", USBD_STACK_SZ, NULL,
@@ -59,6 +59,11 @@ static void usb_device_task(void *param) {
     }
 #endif
     setup();
+}
+
+[[noreturn]]
+static void loopFn() {
+    initFn();
     for (;;) {
 #if USE_FREERTOS && !(NO_YIELD)
         yieldIfNecessary();
