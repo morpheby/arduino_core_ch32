@@ -26,15 +26,73 @@
 */
 
 #include "Arduino.h"
+#include "ch32v30x_isr.h"
 #include "core_config.h"
 #include "HardwareTimer.h"
 #include "ch32vxxx/ch32vxxx_isr.h"
+#include "timer.h"
 
 #if defined(TIM_MODULE_ENABLED) && !defined(TIM_MODULE_ONLY)
+
+#ifdef TIM_MODULE_OPTIONAL
+#define _TIM_ISR(x) _REMAP_ISR(x, ArduinoTIM_ISR)
+#else
+#define _TIM_ISR(x) _ISR_DEF(x)
+#endif
 
 /* Private Defines */
 #define PIN_NOT_USED 0xFF
 #define MAX_RELOAD ((1 << 16) - 1) // Currently even 32b timers are used as 16b to have generic behavior
+
+
+#if defined(TIM1_BASE)
+  _TIM_ISR(TIM1_UP_IRQHandler);
+  _TIM_ISR(TIM1_CC_IRQHandler);
+#endif //TIM1_BASE
+
+#if defined(TIM2_BASE)
+  #if defined(CH32X035)
+  _TIM_ISR(TIM2_UP_IRQHandler);
+  _TIM_ISR(TIM2_CC_IRQHandler);
+  #else
+  _TIM_ISR(TIM2_IRQHandler);
+  #endif
+#endif //TIM2_BASE
+
+#if defined(TIM3_BASE)
+  _TIM_ISR(TIM3_IRQHandler);
+#endif //TIM3_BASE
+
+#if defined(TIM4_BASE)
+  _TIM_ISR(TIM4_IRQHandler);
+#endif //TIM4_BASE
+
+#if defined(TIM5_BASE)
+  _TIM_ISR(TIM5_IRQHandler);
+#endif //TIM5_BASE
+
+#if defined(TIM6_BASE)
+  _TIM_ISR(TIM6_IRQHandler);
+#endif //TIM6_BASE
+
+#if defined(TIM7_BASE)
+  _TIM_ISR(TIM7_IRQHandler);
+#endif //TIM7_BASE
+
+#if defined(TIM8_BASE)
+  _TIM_ISR(TIM8_UP_IRQHandler);
+  _TIM_ISR(TIM8_CC_IRQHandler);
+#endif //TIM8_BASE
+
+#if defined(TIM9_BASE)
+  _TIM_ISR(TIM9_UP_IRQHandler);
+  _TIM_ISR(TIM9_CC_IRQHandler);
+#endif //TIM9_BASE
+
+#if defined(TIM10_BASE)
+  _TIM_ISR(TIM10_UP_IRQHandler);
+  _TIM_ISR(TIM10_CC_IRQHandler);
+#endif //TIM10_BASE
 
 /* Private Variables */
 timerObj_t *HardwareTimer_Handle[TIMER_NUM] = {NULL};
@@ -163,6 +221,80 @@ void HardwareTimer::setup(TIM_TypeDef *instance)
 #endif
     _ChannelMode[i] = TIMER_DISABLED;    
   }
+
+#ifdef TIM_MODULE_OPTIONAL
+  switch(index) {
+#if defined(TIM1_BASE)
+  case TIMER1_INDEX:
+    ISR_Set_TIM1_UP_IRQHandler(_REMAP_ISR_NAME(TIM1_UP_IRQHandler, ArduinoTIM_ISR));
+    ISR_Set_TIM1_CC_IRQHandler(_REMAP_ISR_NAME(TIM1_CC_IRQHandler, ArduinoTIM_ISR));
+    break;
+#endif //TIM1_BASE
+
+#if defined(TIM2_BASE)
+  case TIMER2_INDEX:
+  #if defined(CH32X035)
+    ISR_Set_TIM2_UP_IRQHandler(_REMAP_ISR_NAME(TIM2_UP_IRQHandler, ArduinoTIM_ISR));
+    ISR_Set_TIM2_CC_IRQHandler(_REMAP_ISR_NAME(TIM2_CC_IRQHandler, ArduinoTIM_ISR));
+    break;
+  #else
+    ISR_Set_TIM2_IRQHandler(_REMAP_ISR_NAME(TIM2_IRQHandler, ArduinoTIM_ISR));
+    break;
+  #endif
+#endif //TIM2_BASE
+
+#if defined(TIM3_BASE)
+  case TIMER3_INDEX:
+    ISR_Set_TIM3_IRQHandler(_REMAP_ISR_NAME(TIM3_IRQHandler, ArduinoTIM_ISR));
+    break;
+#endif //TIM3_BASE
+
+#if defined(TIM4_BASE)
+  case TIMER4_INDEX:
+    ISR_Set_TIM4_IRQHandler(_REMAP_ISR_NAME(TIM4_IRQHandler, ArduinoTIM_ISR));
+    break;
+#endif //TIM4_BASE
+
+#if defined(TIM5_BASE)
+  case TIMER5_INDEX:
+    ISR_Set_TIM5_IRQHandler(_REMAP_ISR_NAME(TIM5_IRQHandler, ArduinoTIM_ISR));
+    break;
+#endif //TIM5_BASE
+
+#if defined(TIM6_BASE)
+  case TIMER6_INDEX:
+    ISR_Set_TIM6_IRQHandler(_REMAP_ISR_NAME(TIM6_IRQHandler, ArduinoTIM_ISR));
+    break;
+#endif //TIM6_BASE
+
+#if defined(TIM7_BASE)
+  case TIMER7_INDEX:
+    ISR_Set_TIM7_IRQHandler(_REMAP_ISR_NAME(TIM7_IRQHandler, ArduinoTIM_ISR));
+    break;
+#endif //TIM7_BASE
+
+#if defined(TIM8_BASE)
+  case TIMER8_INDEX:
+    ISR_Set_TIM8_UP_IRQHandler(_REMAP_ISR_NAME(TIM8_UP_IRQHandler, ArduinoTIM_ISR));
+    ISR_Set_TIM8_CC_IRQHandler(_REMAP_ISR_NAME(TIM8_CC_IRQHandler, ArduinoTIM_ISR));
+    break;
+#endif //TIM8_BASE
+
+#if defined(TIM9_BASE)
+  case TIMER9_INDEX:
+    ISR_Set_TIM9_UP_IRQHandler(_REMAP_ISR_NAME(TIM9_UP_IRQHandler, ArduinoTIM_ISR));
+    ISR_Set_TIM9_CC_IRQHandler(_REMAP_ISR_NAME(TIM9_CC_IRQHandler, ArduinoTIM_ISR));
+    break;
+#endif //TIM9_BASE
+
+#if defined(TIM10_BASE)
+  case TIMER10_INDEX:
+    ISR_Set_TIM10_UP_IRQHandler(_REMAP_ISR_NAME(TIM10_UP_IRQHandler, ArduinoTIM_ISR));
+    ISR_Set_TIM10_CC_IRQHandler(_REMAP_ISR_NAME(TIM10_CC_IRQHandler, ArduinoTIM_ISR));
+    break;
+#endif //TIM10_BASE
+  }
+#endif
 
   /* Configure timer with some default values */
 
@@ -1594,13 +1726,13 @@ void HardwareTimer::timerHandleDeinit()
     * @param  None
     * @retval None
     */
-  _ISR_DEF(TIM1_UP_IRQHandler)
+  _TIM_ISR(TIM1_UP_IRQHandler)
   {
     if (HardwareTimer_Handle[TIMER1_INDEX]) {
       HardwareTimer::updateCallback(&HardwareTimer_Handle[TIMER1_INDEX]->handle);
     }
   }
-  _ISR_DEF(TIM1_CC_IRQHandler)
+  _TIM_ISR(TIM1_CC_IRQHandler)
   {
     if (HardwareTimer_Handle[TIMER1_INDEX]) {
       HardwareTimer::captureCompareCallback(&HardwareTimer_Handle[TIMER1_INDEX]->handle);
@@ -1616,14 +1748,14 @@ void HardwareTimer::timerHandleDeinit()
     * @param  None
     * @retval None
     */
-  _ISR_DEF(TIM2_UP_IRQHandler)
+  _TIM_ISR(TIM2_UP_IRQHandler)
   {
     if (HardwareTimer_Handle[TIMER2_INDEX]) {
       HardwareTimer::updateCallback(&HardwareTimer_Handle[TIMER2_INDEX]->handle);
     }
   }
 
-  _ISR_DEF(TIM2_CC_IRQHandler)
+  _TIM_ISR(TIM2_CC_IRQHandler)
   {
     if (HardwareTimer_Handle[TIMER2_INDEX]) {
       HardwareTimer::captureCompareCallback(&HardwareTimer_Handle[TIMER2_INDEX]->handle);
@@ -1636,7 +1768,7 @@ void HardwareTimer::timerHandleDeinit()
     * @param  None
     * @retval None
     */
-  _ISR_DEF(TIM2_IRQHandler)
+  _TIM_ISR(TIM2_IRQHandler)
   {
     if (HardwareTimer_Handle[TIMER2_INDEX]) 
     {
@@ -1654,7 +1786,7 @@ void HardwareTimer::timerHandleDeinit()
     * @param  None
     * @retval None
     */
-  _ISR_DEF(TIM3_IRQHandler)
+  _TIM_ISR(TIM3_IRQHandler)
   {
     if (HardwareTimer_Handle[TIMER3_INDEX]) {
       HardwareTimer::updateCallback(&HardwareTimer_Handle[TIMER3_INDEX]->handle);
@@ -1669,7 +1801,7 @@ void HardwareTimer::timerHandleDeinit()
     * @param  None
     * @retval None
     */
-  _ISR_DEF(TIM4_IRQHandler)
+  _TIM_ISR(TIM4_IRQHandler)
   {
     if (HardwareTimer_Handle[TIMER4_INDEX]) {
        HardwareTimer::updateCallback(&HardwareTimer_Handle[TIMER4_INDEX]->handle);
@@ -1684,7 +1816,7 @@ void HardwareTimer::timerHandleDeinit()
     * @param  None
     * @retval None
     */
-  _ISR_DEF(TIM5_IRQHandler)
+  _TIM_ISR(TIM5_IRQHandler)
   {
     if (HardwareTimer_Handle[TIMER5_INDEX]) {
        HardwareTimer::updateCallback(&HardwareTimer_Handle[TIMER5_INDEX]->handle);
@@ -1699,7 +1831,7 @@ void HardwareTimer::timerHandleDeinit()
     * @param  None
     * @retval None
     */
-  _ISR_DEF(TIM6_IRQHandler)
+  _TIM_ISR(TIM6_IRQHandler)
   {
     if (HardwareTimer_Handle[TIMER6_INDEX]) {
        HardwareTimer::updateCallback(&HardwareTimer_Handle[TIMER6_INDEX]->handle);
@@ -1714,7 +1846,7 @@ void HardwareTimer::timerHandleDeinit()
     * @param  None
     * @retval None
     */
-  _ISR_DEF(TIM7_IRQHandler)
+  _TIM_ISR(TIM7_IRQHandler)
   {
     if (HardwareTimer_Handle[TIMER7_INDEX]) {
        HardwareTimer::updateCallback(&HardwareTimer_Handle[TIMER7_INDEX]->handle);
@@ -1729,13 +1861,13 @@ void HardwareTimer::timerHandleDeinit()
     * @param  None
     * @retval None
     */
-  _ISR_DEF(TIM8_UP_IRQHandler)
+  _TIM_ISR(TIM8_UP_IRQHandler)
   {
     if (HardwareTimer_Handle[TIMER8_INDEX]) {
        HardwareTimer::updateCallback(&HardwareTimer_Handle[TIMER8_INDEX]->handle);
     }
   }
-  _ISR_DEF(TIM8_CC_IRQHandler)
+  _TIM_ISR(TIM8_CC_IRQHandler)
   {
     if (HardwareTimer_Handle[TIMER8_INDEX]) {
       HardwareTimer::captureCompareCallback(&HardwareTimer_Handle[TIMER8_INDEX]->handle);
@@ -1749,13 +1881,13 @@ void HardwareTimer::timerHandleDeinit()
     * @param  None
     * @retval None
     */
-  _ISR_DEF(TIM9_UP_IRQHandler)
+  _TIM_ISR(TIM9_UP_IRQHandler)
   {
     if (HardwareTimer_Handle[TIMER9_INDEX]) {
        HardwareTimer::updateCallback(&HardwareTimer_Handle[TIMER9_INDEX]->handle);
     }
   }
-  _ISR_DEF(TIM9_CC_IRQHandler)
+  _TIM_ISR(TIM9_CC_IRQHandler)
   {
     if(HardwareTimer_Handle[TIMER9_INDEX]){
         HardwareTimer::captureCompareCallback(&HardwareTimer_Handle[TIMER9_INDEX]->handle);
@@ -1769,13 +1901,13 @@ void HardwareTimer::timerHandleDeinit()
     * @param  None
     * @retval None
     */
-  _ISR_DEF(TIM10_UP_IRQHandler)
+  _TIM_ISR(TIM10_UP_IRQHandler)
   {
     if (HardwareTimer_Handle[TIMER10_INDEX]) {
        HardwareTimer::updateCallback(&HardwareTimer_Handle[TIMER10_INDEX]->handle);
     }
   }
-  _ISR_DEF(TIM10_CC_IRQHandler)
+  _TIM_ISR(TIM10_CC_IRQHandler)
   {
     if (HardwareTimer_Handle[TIMER10_INDEX]){
        HardwareTimer::captureCompareCallback(&HardwareTimer_Handle[TIMER10_INDEX]->handle);
