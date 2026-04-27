@@ -40,7 +40,10 @@
 extern "C" {
 #endif // __cplusplus
 
+[[gnu::cold]]
 extern void setup(void) ;
+
+[[gnu::hot]]
 extern void loop(void) ;
 
 void yield(void);
