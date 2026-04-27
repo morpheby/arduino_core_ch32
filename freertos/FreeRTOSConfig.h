@@ -116,15 +116,11 @@
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION 1
 #define configUSE_POSIX_ERRNO           1
 
-#ifndef FREERTOS_NO_REENT
-#define FREERTOS_NO_REENT 0
-#endif
-
-#if __NEWLIB__ && !(FREERTOS_NO_REENT)
-#define configUSE_NEWLIB_REENTRANT      1
-#else
+// If using newlib
 #define configUSE_NEWLIB_REENTRANT      0
-#endif
+
+// If using picolibc
+#define configUSE_PICOLIBC_TLS             1
 
 #define configSUPPORT_STATIC_ALLOCATION              1
 #define configSUPPORT_DYNAMIC_ALLOCATION             1
@@ -140,8 +136,6 @@
 #define configTIMER_TASK_PRIORITY       ( configMAX_PRIORITIES - 1 )
 #define configTIMER_QUEUE_LENGTH        4
 #define configTIMER_TASK_STACK_DEPTH    ( configMINIMAL_STACK_SIZE )
-
-#define configUSE_PICOLIBC_TLS             1
 
 /* Set the following definitions to 1 to include the API function, or zero
 to exclude the API function. */
