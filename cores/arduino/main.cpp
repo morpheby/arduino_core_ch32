@@ -49,7 +49,8 @@ static void usb_device_task(void *param) {
 
 #endif
 
-[[gnu::cold, gnu::noinline]]
+[[gnu::cold]]
+[[gnu::noinline]]
 static void initFn() {
 #if USE_FREERTOS && USE_TINYUSB
     // Create a task for tinyusb device stack
@@ -62,6 +63,7 @@ static void initFn() {
 }
 
 [[noreturn]]
+[[gnu::hot]]
 static void loopFn() {
     initFn();
     for (;;) {
