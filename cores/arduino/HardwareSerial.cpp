@@ -137,6 +137,12 @@ void HardwareSerial::begin(unsigned long baud, byte config)
       Error_Handler();
       break;
   }
+  (void) stopbits;
+  (void) parity;
+  (void) baud;
+  (void) databits;
+  (void) _serial;
+  // TODO: Implement hardware serial properly
   // uart_init(&_serial, (uint32_t)baud, databits, parity, stopbits);
 }
 

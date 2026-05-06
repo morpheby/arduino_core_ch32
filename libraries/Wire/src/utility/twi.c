@@ -370,8 +370,8 @@ if(size)
 #if OPT_I2C_SLAVE
 i2c_status_e i2c_slave_write_IT(i2c_t *obj, uint8_t *data, uint16_t size)
 {
- 
-
+  // TODO: Not implemented
+  return I2C_ERROR;
 }
 #endif // #if OPT_I2C_SLAVE
 
@@ -598,7 +598,8 @@ i2c_status_e i2c_slave_read(i2c_t *obj, uint8_t *data, uint16_t size)
   */
 i2c_status_e i2c_IsDeviceReady(i2c_t *obj, uint8_t devAddr, uint32_t trials)
 {
- 
+  // TODO: Not implemented
+  return I2C_OK;
 }
 
 /* Aim of the function is to get i2c_s pointer using hi2c pointer */
@@ -658,6 +659,7 @@ _ISR_DEF(I2C1_EV_IRQHandler)
    // MMOLE: I2C1_EV_IRQHandler is the event handler, handle is an I2C_HandleTypeDef struct containing parameters and pointer to the registers
    static int _nCounterEV1=1;
    _nCounterEV1++;
+   (void) _nCounterEV1;
    i2c_slave_process(get_i2c_obj(handle));		// process I2C transmissions, for now only events, not errors
 #endif
  }
@@ -673,6 +675,7 @@ _ISR_DEF(I2C1_ER_IRQHandler)
    // MMOLE: I2C1_ER_IRQHandler is the error handler
    static int _nCounterER1=1;
    _nCounterER1++;
+   (void) _nCounterER1;
 #endif
 }
 #endif // I2C1_BASE
@@ -691,6 +694,7 @@ _ISR_DEF(I2C2_EV_IRQHandler)
    // MMOLE: I2C2_EV_IRQHandler is the event handler, handle is an I2C_HandleTypeDef struct containing parameters and pointer to the registers
    static int _nCounterEV2=1;
    _nCounterEV2++;
+   (void) _nCounterEV2;
    i2c_slave_process(get_i2c_obj(handle));		// process I2C transmissions, for now only events, not errors
    // MMOLE: tested only using I2C1
 #endif
@@ -708,6 +712,7 @@ _ISR_DEF(I2C2_ER_IRQHandler)
    // MMOLE: I2C2_ER_IRQHandler is the error handler
    static int _nCounterER2=1;
    _nCounterER2++;
+   (void) _nCounterER2;
 #endif
 }
 
