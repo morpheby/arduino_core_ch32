@@ -24,6 +24,8 @@ inline void core_debug(const char *format, ...)
   va_start(args, format);
   vfprintf(stderr, format, args);
   va_end(args);
+
+  fflush(stderr);
 #else
   (void)(format);
 #endif /* NDEBUG */
@@ -33,6 +35,7 @@ inline void vcore_debug(const char *format, va_list args)
 {
 #if !defined(NDEBUG)
   vfprintf(stderr, format, args);
+  fflush(stderr);
 #else
   (void)(format);
   (void)(args);
