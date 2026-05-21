@@ -161,5 +161,6 @@ header file. */
 /* Map to the platform printf function. */
 #define configPRINT_STRING( pcString )  printf( pcString )
 
+#define pdMS_TO_TICKS( xTimeInMs )    ( ( TickType_t ) ( ( ( uint64_t ) ( xTimeInMs ) * ( uint64_t ) configTICK_RATE_HZ + 999U ) / ( uint64_t ) 1000U ) )
 
 #endif /* FREERTOS_CONFIG_H */
