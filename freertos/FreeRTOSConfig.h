@@ -99,7 +99,7 @@
 #define configCPU_CLOCK_HZ              SYSCLK_FREQ_HZ
 #define configTICK_RATE_HZ              ( ( TickType_t ) 500 )
 #define configMAX_PRIORITIES            ( 15 )
-#define configMINIMAL_STACK_SIZE        ( ( unsigned short ) 128 ) /* Can be as low as 60 but some of the demo tasks that use this constant require it to be higher. */
+#define configMINIMAL_STACK_SIZE        ( ( unsigned short ) 256 ) /* Can be as low as 60 but some of the demo tasks that use this constant require it to be higher. */
 #define configMAX_TASK_NAME_LEN         ( 16 )
 #define configUSE_TRACE_FACILITY        0
 #define configUSE_16_BIT_TICKS          0
