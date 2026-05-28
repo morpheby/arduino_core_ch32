@@ -27,6 +27,7 @@
 
 #include "Arduino.h"
 #include "ch32v30x_isr.h"
+#include "ch32_clock.h"
 #include "core_config.h"
 #include "HardwareTimer.h"
 #include "ch32vxxx/ch32vxxx_isr.h"
@@ -1636,69 +1637,17 @@ timer_index_t get_timer_index(TIM_TypeDef *instance)
   */
 uint32_t HardwareTimer::getTimerClkFreq()
 {
-  RCC_ClocksTypeDef     RCC_ClocksStatus={};
-  uint32_t              uwTimclock = 0U, uwAPBxPrescaler = 0U;
-
-  /* Get clock configuration */
-  RCC_GetClocksFreq(&RCC_ClocksStatus);
-
-#if !defined(CH32V00x) && !defined(CH32X035) && !defined(CH32VM00X)
   switch (getTimerClkSrc(_timerObj.handle.Instance)) 
   {
     case 1:
-      uwAPBxPrescaler = (RCC->CFGR0 & RCC_PPRE1) >> 8;
-      uwTimclock = RCC_ClocksStatus.PCLK1_Frequency;
-      break;
+        return ch32::clock::current_clock_configuration().timer2_3_4_5_6_7_frequency_hz();
     case 2:
-      uwAPBxPrescaler = (RCC->CFGR0 & RCC_PPRE2) >> 11;
-      uwTimclock = RCC_ClocksStatus.PCLK2_Frequency;
-      break;
+        return ch32::clock::current_clock_configuration().timer1_8_9_10_11_frequency_hz();
     default:
     case 0: // Unknown timer clock source
       Error_Handler();
-      break;
+      return 0;
   }
-
-  switch(uwAPBxPrescaler & 0x7)
-  {
-     case 0x4:
-          uwAPBxPrescaler = 2;
-          break;
-     case 0x5:
-          uwAPBxPrescaler = 4;
-          break;
-     case 0x6:
-          uwAPBxPrescaler = 8;
-          break;
-     case 0x7:
-          uwAPBxPrescaler = 16;
-          break;
-    default:
-          uwAPBxPrescaler = 1;
-          break;         
-  } 
-
-#else //CH32V003 and CH32X035 are equal to AHB CLOCK
-      uwAPBxPrescaler = 1;
-      uwTimclock = RCC_ClocksStatus.HCLK_Frequency;
-
-#endif
-
-    switch (uwAPBxPrescaler) 
-    {
-      default:
-      case 1:
-        uwTimclock*=1;
-        break;
-      case 2:
-      case 4:
-      case 8:
-      case 16:
-        uwTimclock *= 2;
-        break;
-    }
-
-  return uwTimclock;
 }
 
 /**
