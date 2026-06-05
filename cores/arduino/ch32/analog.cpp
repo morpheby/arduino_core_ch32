@@ -48,7 +48,7 @@ _ADC_ISR(ADC1_2_IRQHandler) {
     vTaskNotifyGiveFromISR(adcWaitingTaskHandle, &xHigherPriorityTaskWoken);
   }
 
-  if (xHigherPriorityTaskWoken != pdFALSE) { taskYIELD (); }
+  portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 
   ADC_ClearITPendingBit(ADC1, ADC_IT_EOC | ADC_IT_AWD | ADC_IT_JEOC);
   ADC_ClearITPendingBit(ADC2, ADC_IT_EOC | ADC_IT_AWD | ADC_IT_JEOC);
