@@ -1204,7 +1204,7 @@ uint32_t HardwareTimer::getCaptureCompare(uint32_t channel,  TimerCompareFormat_
 
   switch (format) {
     case MICROSEC_COMPARE_FORMAT:
-      return_value = (uint32_t)((CCR_RegisterValue * Prescalerfactor * 1000000.0) / getTimerClkFreq());
+      return_value = (uint32_t)((CCR_RegisterValue * (Prescalerfactor * 1000000.0f)) / getTimerClkFreq());
       break;
     case HERTZ_COMPARE_FORMAT:
       return_value = (uint32_t)(getTimerClkFreq() / (CCR_RegisterValue  * Prescalerfactor));
