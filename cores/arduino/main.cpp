@@ -180,7 +180,16 @@ extern "C" void vApplicationGetTimerTaskMemory( StaticTask_t **ppxTimerTaskTCBBu
 int __attribute__((used)) main( void )
 {
     pre_init();
+
+    #if (INTSYSCR_INEST == INTSYSCR_INEST_NoEN)
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
+    #elif (INTSYSCR_INEST == INTSYSCR_INEST_EN_2Level)
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+    #elif (INTSYSCR_INEST == INTSYSCR_INEST_EN_8Level)
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_3);
+    #else
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+    #endif
 
 #if !USE_BUFFERED_IO
     // Disable buffering on stdout/stderr
