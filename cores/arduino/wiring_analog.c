@@ -18,6 +18,7 @@
 
 #include "Arduino.h"
 #include "PinConfigured.h"
+#include "analog.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -115,8 +116,7 @@ static inline uint32_t mapResolution(uint32_t value, uint32_t from, uint32_t to)
 
 #if ADC_CTLR_ADCAL
 void analogCalibration() {
-  perform_adc_calibration(ADC1);
-  perform_adc_calibration(ADC2);
+  calibrate_all_adcs();
 }
 #endif
 

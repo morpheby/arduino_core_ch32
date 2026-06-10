@@ -765,7 +765,12 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution, uint8_t gain)
 }
 
 #if defined(ADC_CTLR_ADCAL)
-void perform_adc_calibration(ADC_TypeDef *padc) {
+void calibrate_all_adcs() {
+  calibration_value_adc1 = perform_adc_calibration(ADC1);
+  calibration_value_adc2 = perform_adc_calibration(ADC2);
+}
+
+uint16_t perform_adc_calibration(ADC_TypeDef *padc) {
   // Original code was something complicated and unstable. Instead we do it in a simpler way
   // here:
   // Calibration Code is technically just an offset value of (2^(res-1) + offset).
@@ -829,11 +834,7 @@ void perform_adc_calibration(ADC_TypeDef *padc) {
 
   uint16_t calibration_value = (uint16_t) ( (1 << (ADC_RESOLUTION - 1)) - (sum / 6) );
 
-    if (padc == ADC1) {
-      calibration_value_adc1 = calibration_value;
-    } else if (padc == ADC2) {
-      calibration_value_adc2 = calibration_value;
-    }
+  return calibration_value;
 }
 #endif
 
