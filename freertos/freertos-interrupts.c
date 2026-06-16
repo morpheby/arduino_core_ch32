@@ -7,6 +7,8 @@
 
 #ifndef NDEBUG 
     #define DBGREG volatile
+#else
+    #define DBGREG
 #endif
 
 #if CH32_GLOBAL_ISR
